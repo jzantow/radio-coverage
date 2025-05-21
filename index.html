@@ -838,31 +838,34 @@
     });
   }
 
-  function generateStoreInfo(loc) {
-    const stationsInRange = stationCircles
-      .map(circle => {
-        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-          new google.maps.LatLng(loc.Latitude, loc.Longitude),
-          circle.getCenter()
+function generateStoreInfo(loc) {
+  const stationsInRange = stationCircles
+    .map(circle => {
+      const distance = google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(loc.Latitude, loc.Longitude),
+        circle.getCenter()
+      );
+      if (distance <= circle.getRadius()) {
+        const station = locations.find(l =>
+          l.Type === "Station" &&
+          l.Latitude === circle.getCenter().lat() &&
+          l.Longitude === circle.getCenter().lng()
         );
-        if (distance <= circle.getRadius()) {
-          const station = locations.find(l =>
-            l.Type === "Station" &&
-            l.Latitude === circle.getCenter().lat() &&
-            l.Longitude === circle.getCenter().lng()
-          );
-          return station?.Name;
-        }
-        return null;
-      })
-      .filter(Boolean);
+        return station?.Name;
+      }
+      return null;
+    })
+    .filter(Boolean);
 
-    return `
-      <strong>${loc.Name}</strong><br>
-      ${loc.Info}<br>
-      <b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join(", ") : "None"}
-    `;
-  }
+  // Deduplicate station names
+  const uniqueStations = [...new Set(stationsInRange)];
+
+  return `
+    <strong>${loc.Name}</strong><br>
+    ${loc.Info}<br>
+    <b>In Range Of:</b><br>${uniqueStations.length ? uniqueStations.join(", ") : "None"}
+  `;
+}
 
   window.onload = initMap;
 </script>
