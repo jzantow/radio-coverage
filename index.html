@@ -1,53 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Dynamic Radio Coverage Map</title>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE"></script>
-  <script>
-    async function fetchLocations() {
-      const sheetId = "1IDbCTOTxLI62S1RUMcCWfnXIL3rTbtAi-sxk08qRJd8";
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&id=${sheetId}&gid=0`;
-      const response = await fetch(csvUrl);
-      const csvText = await response.text();
-      return parseCSV(csvText);
-    }
-
-    function parseCSV(csvText) {
-      const lines = csvText.trim().split('\n');
-      const headers = lines[0].split(',');
-      const locations = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',');
-        const loc = {};
-        headers.forEach((header, idx) => {
-          loc[header.trim()] = cols[idx].trim();
+  <head>
+    <title>Radius Map</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE"></script>
+    <script>
+      function initMap() {
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 5,
+          center: { lat: 36.7783, lng: -119.4179 }, // California
         });
-        locations.push(loc);
+
+        const locations = [
+          { lat: 43.628293, lng: --93.153534, radius: 100, name: "KAUS-FM" },
+          { lat: 43.685315, lng: --92.98044283, radius: 10, name: "Austin #467" },
+        ];
+
+        locations.forEach(loc => {
+          new google.maps.Circle({
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#FF0000",
+            fillOpacity: 0.35,
+            map,
+            center: { lat: loc.lat, lng: loc.lng },
+            radius: loc.radius * 1609.34, // miles to meters
+          });
+
+          new google.maps.Marker({
+            position: { lat: loc.lat, lng: loc.lng },
+            map,
+            title: loc.name,
+          });
+        });
       }
-      return locations;
-    }
-
-    async function initMap() {
-      const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 6,
-        center: { lat: 44.5, lng: -89.5 },
-      });
-
-      const locations = await fetchLocations();
-
-      locations.forEach(loc => {
-        const lat = parseFloat(loc.Latitude);
-        const lng = parseFloat(loc.Longitude);
-        const radiusMiles = parseFloat(loc['Radius (miles)']);
-
-        if (isNaN(lat) || isNaN(lng) || isNaN(radiusMiles)) {
-          console.warn('Invalid location data skipped:', loc);
-          return;
-        }
-
-        new google.maps.Circle({
-          strokeColor: "#007BFF",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#007BFF",
+    </script>
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body onload="initMap()">
+    <div id="map"></div>
+  </body>
+</html>
