@@ -41,33 +41,13 @@
         const lng = parseFloat(loc.Longitude);
         const radiusMiles = parseFloat(loc['Radius (miles)']);
 
+        if (isNaN(lat) || isNaN(lng) || isNaN(radiusMiles)) {
+          console.warn('Invalid location data skipped:', loc);
+          return;
+        }
+
         new google.maps.Circle({
           strokeColor: "#007BFF",
           strokeOpacity: 0.8,
           strokeWeight: 2,
           fillColor: "#007BFF",
-          fillOpacity: 0.25,
-          map,
-          center: { lat, lng },
-          radius: radiusMiles * 1609.34,
-        });
-
-        new google.maps.Marker({
-          position: { lat, lng },
-          map,
-          title: loc.Name,
-        });
-      });
-    }
-  </script>
-  <style>
-    html, body, #map {
-      height: 100%;
-      margin: 0; padding: 0;
-    }
-  </style>
-</head>
-<body onload="initMap()">
-  <div id="map"></div>
-</body>
-</html>
