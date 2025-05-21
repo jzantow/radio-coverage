@@ -9,6 +9,7 @@
       margin: 0;
       padding: 0;
     }
+
     #controls {
       position: absolute;
       top: 60px;
@@ -22,6 +23,7 @@
       border-radius: 5px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
     input[type="text"] {
       padding: 6px;
       font-size: 14px;
@@ -29,6 +31,7 @@
       border-radius: 4px;
       width: 250px;
     }
+
     .control-btn {
       padding: 6px 12px;
       font-size: 14px;
@@ -39,6 +42,7 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
     #legend {
       background: white;
       padding: 10px;
@@ -51,6 +55,7 @@
       z-index: 5;
       border-radius: 5px;
     }
+
     .legend-color {
       display: inline-block;
       width: 15px;
@@ -59,9 +64,11 @@
       vertical-align: middle;
       border-radius: 3px;
     }
+
     .legend-color.station {
       background: #1E90FF;
     }
+
     .legend-color.store {
       background: #FF6347;
     }
@@ -76,7 +83,9 @@
     <button id="stationSearchBtn" class="control-btn">Search Station</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
+
   <div id="map"></div>
+
   <div id="legend">
     <h3>Legend</h3>
     <p><span class="legend-color station"></span> Station</p>
@@ -88,9 +97,9 @@
     let storeMarkers = [];
     let stationMarkers = [];
     let stationCircles = [];
-    let highlightedMarker = null;
+    let infoWindows = [];
 
-    const locations = [{
+    const locations = [      {
         Name: "KAUS-FM",
         Latitude: 43.628293,
         Longitude: -93.153534,
@@ -716,7 +725,7 @@
 {"Name": "KRVX-FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br><b>Station Rank:</b> #1"},
 {"Name": "KDVL-FM", "Latitude": 47.9878, "Longitude": -98.9333, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br><b>Station Rank:</b> #1"},];
 
-const colors = {
+    const colors = {
       "Station": "#1E90FF",
       "Store": "#FF6347"
     };
@@ -796,26 +805,6 @@ const colors = {
           storeMarkers.push(marker);
         }
       });
-
-const hoverInfoWindow = new google.maps.InfoWindow();
-
-stationCircles.forEach((circle) => {
-  const matchingStation = locations.find(l =>
-    l.Type === "Station" &&
-    l.Latitude === circle.getCenter().lat() &&
-    l.Longitude === circle.getCenter().lng()
-  );
-
-  circle.addListener("mouseover", (e) => {
-    hoverInfoWindow.setContent(`<strong>${matchingStation.Name}</strong><br>${matchingStation.Info}`);
-    hoverInfoWindow.setPosition(e.latLng);
-    hoverInfoWindow.open(map);
-  });
-
-  circle.addListener("mouseout", () => {
-    hoverInfoWindow.close();
-  });
-});
 
       // Event listeners
       document.getElementById("storeSearchBtn").addEventListener("click", () => {
