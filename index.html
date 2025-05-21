@@ -12,20 +12,23 @@
 
     #controls {
       position: absolute;
-      top: 10px;
+      top: 60px; /* moved down from 10px */
       left: 10px;
       z-index: 5;
       display: flex;
       flex-direction: row;
       gap: 5px;
       align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     #searchBox {
       width: 250px;
       padding: 8px;
       font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       border: 1px solid #ccc;
       border-radius: 4px;
       background: white;
@@ -34,12 +37,12 @@
     .control-btn {
       padding: 8px 12px;
       font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       border: 1px solid #ccc;
       border-radius: 4px;
       background: white;
       cursor: pointer;
       user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     #legend {
@@ -53,6 +56,7 @@
       bottom: 10px;
       right: 10px;
       z-index: 5;
+      border-radius: 5px;
     }
 
     .legend-color {
@@ -95,6 +99,7 @@
     let stationMarkers = [];
     let stationCircles = [];
     let infoWindows = [];
+    let highlightedMarker = null;  // store currently highlighted marker
 
     const locations = [
       { Name: "KAUS-FM", Latitude: 43.628293, Longitude: -93.153534, Radius: 100, Type: "Station" },
@@ -196,36 +201,54 @@
         const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
 
         map.panTo(latLng);
-        map.setZoom(7);
+        map.setZoom(8);  // Adjust zoom here if needed
+
+        // Remove highlight from previously highlighted marker
+        if (highlightedMarker) {
+          resetMarkerIcon(highlightedMarker);
+          highlightedMarker = null;
+        }
 
         // Highlight the marker
         const marker = storeMarkers.find(m => m.getTitle().toLowerCase().includes(searchTerm));
         if (marker) {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
-
-          const originalIcon = marker.getIcon();
-          const originalFillColor = originalIcon.fillColor;
+          highlightedMarker = marker;
 
           marker.setIcon({
-            ...originalIcon,
-            fillColor: "#FFD700"  // Gold highlight
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            fillColor: "#FFD700",  // Gold highlight
+            fillOpacity: 1,
+            strokeWeight: 2,
+            strokeColor: "#B8860B"
           });
-
-          setTimeout(() => {
-            marker.setAnimation(null);
-            marker.setIcon({
-              ...originalIcon,
-              fillColor: originalFillColor
-            });
-          }, 2000);
         }
       } else {
         alert("No matching store found.");
       }
     }
 
+    function resetMarkerIcon(marker) {
+      const originalColor = colors["Store"];
+      marker.setIcon({
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 7,
+        fillColor: originalColor,
+        fillOpacity: 1,
+        strokeWeight: 1,
+        strokeColor: "#fff"
+      });
+    }
+
     function resetMap() {
       document.getElementById("searchBox").value = "";
+
+      // Remove highlight from marker if any
+      if (highlightedMarker) {
+        resetMarkerIcon(highlightedMarker);
+        highlightedMarker = null;
+      }
+
       map.setZoom(5);
       map.setCenter({ lat: 39.5, lng: -98.35 });
     }
