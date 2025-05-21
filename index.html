@@ -196,7 +196,7 @@
         const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
 
         map.panTo(latLng);
-        map.setZoom(10);
+        map.setZoom(3);
 
         // Highlight the marker
         const marker = storeMarkers.find(m => m.getTitle().toLowerCase().includes(searchTerm));
