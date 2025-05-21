@@ -63,8 +63,8 @@
   <script>
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 8,
-        center: { lat: 43.65, lng: -93.1 }
+        zoom: 5,
+        center: { lat: 39.5, lng: -98.35 } // center of US
       });
 
       const colors = {
@@ -86,6 +86,27 @@
           Longitude: -92.98044283,
           Radius: 5,
           Type: "Store"
+        },
+        {
+          Name: "Bakersfield Buck Owens",
+          Latitude: 35.387762,
+          Longitude: -119.042628,
+          Radius: 1,
+          Type: "Store"
+        },
+        {
+          Name: "Bakersfield Calloway Dr",
+          Latitude: 35.410107,
+          Longitude: -119.110601,
+          Radius: 1,
+          Type: "Store"
+        },
+        {
+          Name: "KUZZ-FM",
+          Latitude: 35.438000,
+          Longitude: -118.740944,
+          Radius: 70,
+          Type: "Station"
         }
       ];
 
@@ -150,12 +171,10 @@
       document.getElementById("searchBox").addEventListener("input", function () {
         const searchTerm = this.value.toLowerCase();
 
-        // Hide everything first
         storeMarkers.forEach(m => m.setVisible(false));
         stationMarkers.forEach(m => m.setVisible(false));
         stationCircles.forEach(c => c.setMap(null));
 
-        // Find store
         const store = locations.find(l =>
           l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
         );
@@ -163,15 +182,12 @@
         if (!store) return;
 
         const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
-
         map.setCenter(storeLatLng);
         map.setZoom(10);
 
-        // Show store marker
         const storeMarker = storeMarkers.find(m => m.getTitle() === store.Name);
         if (storeMarker) storeMarker.setVisible(true);
 
-        // Show covering stations
         locations.forEach((loc, idx) => {
           if (loc.Type === "Station") {
             const stationLatLng = new google.maps.LatLng(loc.Latitude, loc.Longitude);
