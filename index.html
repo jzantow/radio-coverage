@@ -10,17 +10,24 @@
       padding: 0;
     }
 
-    #searchBox {
+    #controls {
       position: absolute;
       top: 10px;
       left: 10px;
       z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    #searchBox, .control-btn {
       width: 250px;
       padding: 8px;
-      font-size: 16px;
+      font-size: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       border: 1px solid #ccc;
       border-radius: 4px;
+      background: white;
     }
 
     #legend {
@@ -52,7 +59,13 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
-  <input id="searchBox" type="text" placeholder="Search for store..." />
+  <div id="controls">
+    <input id="searchBox" type="text" placeholder="Search for store..." />
+    <button id="resetBtn" class="control-btn">Reset</button>
+    <button class="control-btn" onclick="zoomToState('MN')">Go to Minnesota</button>
+    <button class="control-btn" onclick="zoomToState('CA')">Go to California</button>
+  </div>
+
   <div id="map"></div>
   <div id="legend">
     <h3>Legend</h3>
@@ -61,62 +74,34 @@
   </div>
 
   <script>
+    let map;
+    let storeMarkers = [];
+    let stationMarkers = [];
+    let stationCircles = [];
+    let infoWindows = [];
+
+    const locations = [
+      { Name: "KAUS-FM", Latitude: 43.628293, Longitude: -93.153534, Radius: 100, Type: "Station" },
+      { Name: "Austin #467", Latitude: 43.685315, Longitude: -92.98044283, Radius: 5, Type: "Store" },
+      { Name: "Bakersfield Buck Owens", Latitude: 35.387762, Longitude: -119.042628, Radius: 1, Type: "Store" },
+      { Name: "Bakersfield Calloway Dr", Latitude: 35.410107, Longitude: -119.110601, Radius: 1, Type: "Store" },
+      { Name: "KUZZ-FM", Latitude: 35.438000, Longitude: -118.740944, Radius: 70, Type: "Station" }
+    ];
+
+    const colors = {
+      "Station": "#1E90FF",
+      "Store": "#FF6347"
+    };
+
     function initMap() {
-      const map = new google.maps.Map(document.getElementById("map"), {
+      map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
-        center: { lat: 39.5, lng: -98.35 } // center of US
+        center: { lat: 39.5, lng: -98.35 }
       });
-
-      const colors = {
-        "Station": "#1E90FF", // Dodger Blue
-        "Store": "#FF6347"    // Tomato Red
-      };
-
-      const locations = [
-        {
-          Name: "KAUS-FM",
-          Latitude: 43.628293,
-          Longitude: -93.153534,
-          Radius: 100,
-          Type: "Station"
-        },
-        {
-          Name: "Austin #467",
-          Latitude: 43.685315,
-          Longitude: -92.98044283,
-          Radius: 5,
-          Type: "Store"
-        },
-        {
-          Name: "Bakersfield Buck Owens",
-          Latitude: 35.387762,
-          Longitude: -119.042628,
-          Radius: 1,
-          Type: "Store"
-        },
-        {
-          Name: "Bakersfield Calloway Dr",
-          Latitude: 35.410107,
-          Longitude: -119.110601,
-          Radius: 1,
-          Type: "Store"
-        },
-        {
-          Name: "KUZZ-FM",
-          Latitude: 35.438000,
-          Longitude: -118.740944,
-          Radius: 70,
-          Type: "Station"
-        }
-      ];
-
-      const storeMarkers = [];
-      const stationMarkers = [];
-      const stationCircles = [];
 
       locations.forEach((loc, index) => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
-        const color = colors[loc.Type] || "#000000";
+        const color = colors[loc.Type] || "#000";
 
         const circle = new google.maps.Circle({
           strokeColor: color,
@@ -125,7 +110,7 @@
           fillColor: color,
           fillOpacity: 0.25,
           map: loc.Type === "Station" ? map : null,
-          center: center,
+          center,
           radius: loc.Radius * 1609.34
         });
 
@@ -143,66 +128,95 @@
           }
         });
 
-        const infoWindow = new google.maps.InfoWindow({
-          content: loc.Name
-        });
+        const infoWindow = new google.maps.InfoWindow({ content: loc.Name });
 
-        marker.addListener("mouseover", () => {
-          infoWindow.open(map, marker);
-        });
+        marker.addListener("mouseover", () => infoWindow.open(map, marker));
+        marker.addListener("mouseout", () => infoWindow.close());
 
-        marker.addListener("mouseout", () => {
-          infoWindow.close();
+        // Circle hover
+        circle.addListener("mouseover", (e) => {
+          infoWindow.setPosition(e.latLng);
+          infoWindow.setContent(loc.Name);
+          infoWindow.open(map);
         });
+        circle.addListener("mouseout", () => infoWindow.close());
 
-        if (loc.Type === "Store") {
-          storeMarkers.push(marker);
-        } else {
+        infoWindows.push(infoWindow);
+
+        if (loc.Type === "Store") storeMarkers.push(marker);
+        else {
           stationMarkers.push(marker);
           stationCircles.push(circle);
         }
       });
 
-      // Add legend to map
+      // Legend
       const legend = document.getElementById("legend");
       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
-      // Search functionality
-      document.getElementById("searchBox").addEventListener("input", function () {
-        const searchTerm = this.value.toLowerCase();
+      // Search
+      document.getElementById("searchBox").addEventListener("input", handleSearch);
 
-        storeMarkers.forEach(m => m.setVisible(false));
-        stationMarkers.forEach(m => m.setVisible(false));
-        stationCircles.forEach(c => c.setMap(null));
+      // Reset
+      document.getElementById("resetBtn").addEventListener("click", resetMap);
+    }
 
-        const store = locations.find(l =>
-          l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
-        );
+    function handleSearch() {
+      const searchTerm = document.getElementById("searchBox").value.toLowerCase();
 
-        if (!store) return;
+      storeMarkers.forEach(m => m.setVisible(false));
+      stationMarkers.forEach(m => m.setVisible(false));
+      stationCircles.forEach(c => c.setMap(null));
 
-        const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
-        map.setCenter(storeLatLng);
-        map.setZoom(10);
+      const store = locations.find(l =>
+        l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
+      );
+      if (!store) return;
 
-        const storeMarker = storeMarkers.find(m => m.getTitle() === store.Name);
-        if (storeMarker) storeMarker.setVisible(true);
+      const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
+      map.setCenter(storeLatLng);
+      map.setZoom(10);
 
-        locations.forEach((loc, idx) => {
-          if (loc.Type === "Station") {
-            const stationLatLng = new google.maps.LatLng(loc.Latitude, loc.Longitude);
-            const radiusMeters = loc.Radius * 1609.34;
-            const distance = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+      const storeMarker = storeMarkers.find(m => m.getTitle() === store.Name);
+      if (storeMarker) storeMarker.setVisible(true);
 
-            if (distance <= radiusMeters) {
-              const marker = stationMarkers[idx];
-              const circle = stationCircles[idx];
-              marker.setVisible(true);
-              circle.setMap(map);
-            }
+      locations.forEach((loc, idx) => {
+        if (loc.Type === "Station") {
+          const stationLatLng = new google.maps.LatLng(loc.Latitude, loc.Longitude);
+          const radiusMeters = loc.Radius * 1609.34;
+          const distance = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+
+          if (distance <= radiusMeters) {
+            stationMarkers[idx].setVisible(true);
+            stationCircles[idx].setMap(map);
           }
-        });
+        }
       });
+    }
+
+    function resetMap() {
+      document.getElementById("searchBox").value = "";
+      map.setZoom(5);
+      map.setCenter({ lat: 39.5, lng: -98.35 });
+
+      storeMarkers.forEach(m => m.setVisible(true));
+      stationMarkers.forEach(m => m.setVisible(true));
+      stationCircles.forEach(c => c.setMap(map));
+    }
+
+    function zoomToState(state) {
+      const bounds = new google.maps.LatLngBounds();
+
+      locations.forEach(loc => {
+        if ((state === "MN" && loc.Latitude > 43 && loc.Latitude < 48) ||
+            (state === "CA" && loc.Latitude > 32 && loc.Latitude < 38)) {
+          bounds.extend({ lat: loc.Latitude, lng: loc.Longitude });
+        }
+      });
+
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds);
+      }
     }
 
     window.onload = initMap;
