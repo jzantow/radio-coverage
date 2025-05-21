@@ -91,16 +91,16 @@
     <p><span class="legend-color station"></span> Station</p>
     <p><span class="legend-color store"></span> Store</p>
   </div>
+<script>
+  let map;
+  let storeMarkers = [];
+  let stationMarkers = [];
+  let stationCircles = [];
+  let infoWindows = [];
+  let highlightedMarker = null;
 
-  <script>
-    let map;
-    let storeMarkers = [];
-    let stationMarkers = [];
-    let stationCircles = [];
-    let infoWindows = [];
-
-    const locations = [
-{"Name": "KBVB 95.1FM", "Latitude": 46.8792, "Longitude": -96.5281, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KEGK 106.9FM", "Latitude": 46.5461, "Longitude": -96.6279, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #5<br>"}, {"Name": "KFGO 790AM", "Latitude": 46.7181, "Longitude": -96.8014, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KLTA 98.7FM", "Latitude": 46.8792, "Longitude": -96.5281, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #6T<br>"}, {"Name": "KPFX 107.9FM", "Latitude": 46.7597, "Longitude": -96.6079, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KQWB 105.1FM", "Latitude": 46.9758, "Longitude": -96.5839, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KJKJ 107.5FM", "Latitude": 47.9644, "Longitude": -97.0298, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KKXL 92.9FM", "Latitude": 47.9644, "Longitude": -97.0294, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #4T<br>"}, {"Name": "KQHT 96.1FM", "Latitude": 47.8453, "Longitude": -96.8398, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KYCK 97.1FM", "Latitude": 47.8214, "Longitude": -96.8179, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #4T<br>"}, {"Name": "KKRC 97.3FM", "Latitude": 43.7294, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #5<br>"}, {"Name": "KRRO 103.7FM", "Latitude": 43.4578, "Longitude": -96.6709, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KTWB 92.5FM", "Latitude": 43.5925, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KYBB 102.7FM", "Latitude": 43.5925, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KNBZ 97.7FM", "Latitude": 45.4644, "Longitude": -98.4861, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KSDN 94.1FM", "Latitude": 45.4644, "Longitude": -98.4861, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KDVL 102.5FM", "Latitude": 47.9878, "Longitude": -98.9333, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> <br>"}, {"Name": "KZZY 103.5FM", "Latitude": 47.9803, "Longitude": -99.0533, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KRVX 103.1FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Classic Rock<br> <b>Station Rank:</b> <br>"}, {"Name": "KYNU 95.5FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> <br>"}, {"Name": "KARP 106.9FM", "Latitude": 44.9583, "Longitude": -94.2025, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KGLB 1310AM", "Latitude": 44.9583, "Longitude": -94.2025, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KMIT 105.9FM", "Latitude": 43.7094, "Longitude": -98.0292, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KQRN 107.3FM", "Latitude": 43.7094, "Longitude": -98.0292, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KTHC 95.1FM", "Latitude": 47.6, "Longitude": -97, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KYYZ 96.1FM", "Latitude": 48.25, "Longitude": -101.3, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KDLO 96.9FM", "Latitude": 44.9, "Longitude": -97.1, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KPHR 106.3FM", "Latitude": 46.9, "Longitude": -96.8, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KXLG 99.1FM", "Latitude": 44.9, "Longitude": -97.1, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> <br>"}, {"Name": "KDSR 101.1FM", "Latitude": 48.2, "Longitude": -101.3, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KEYZ 660AM", "Latitude": 48.2, "Longitude": -103.6, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KDAM 94.3FM", "Latitude": 47.9, "Longitude": -97, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KVHT 106.3FM", "Latitude": 42.8, "Longitude": -96.9, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KAUS 1480AM", "Latitude": 43.6281, "Longitude": -93.1536, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KAUS 99.9FM", "Latitude": 43.7, "Longitude": -96.7, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KFNL 104.3FM", "Latitude": 43.7, "Longitude": -96.7, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KRCH 101.7FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3T<br>"}, {"Name": "KCTR 102.9FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KPLN 106.7FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KRSQ 101.9FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #3<br>"},{"Name": "Richfield 66th #477", "Latitude": 44.8832696, "Longitude": -93.3183539, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
+  const locations = [
+    {"Name": "Richfield 66th #477", "Latitude": 44.8832696, "Longitude": -93.3183539, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
 {"Name": "Kimberly #136", "Latitude": 42.5485282977105, "Longitude": -114.365214371035, "Radius": 1, "Type": "Store", "Info": "Region: Mountain; Date Opened: 2025"},
 {"Name": "Sartell #476", "Latitude": 45.596418034594, "Longitude": -94.1916243715665, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
 {"Name": "Dickinson #473", "Latitude": 46.89197, "Longitude": -102.8351, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
@@ -670,172 +670,182 @@
 {"Name": "Madras #13", "Latitude": 44.642952, "Longitude": -121.128662, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1956"},
 {"Name": "Bend #12", "Latitude": 44.052553, "Longitude": -121.302049, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1955"},
 {"Name": "Redmond #9", "Latitude": 44.284346, "Longitude": -121.174777, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1953"},
-{"Name": "Prineville #11", "Latitude": 44.302615, "Longitude": -120.83274, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1952"},
-];
+{"Name": "Prineville #11", "Latitude": 44.302615, "Longitude": -120.83274, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1952"}, {"Name": "KBVB 95.1FM", "Latitude": 46.8792, "Longitude": -96.5281, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KEGK 106.9FM", "Latitude": 46.5461, "Longitude": -96.6279, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #5<br>"}, {"Name": "KFGO 790AM", "Latitude": 46.7181, "Longitude": -96.8014, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KLTA 98.7FM", "Latitude": 46.8792, "Longitude": -96.5281, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #6T<br>"}, {"Name": "KPFX 107.9FM", "Latitude": 46.7597, "Longitude": -96.6079, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KQWB 105.1FM", "Latitude": 46.9758, "Longitude": -96.5839, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KJKJ 107.5FM", "Latitude": 47.9644, "Longitude": -97.0298, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KKXL 92.9FM", "Latitude": 47.9644, "Longitude": -97.0294, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #4T<br>"}, {"Name": "KQHT 96.1FM", "Latitude": 47.8453, "Longitude": -96.8398, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #2T<br>"}, {"Name": "KYCK 97.1FM", "Latitude": 47.8214, "Longitude": -96.8179, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #4T<br>"}, {"Name": "KKRC 97.3FM", "Latitude": 43.7294, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #5<br>"}, {"Name": "KRRO 103.7FM", "Latitude": 43.4578, "Longitude": -96.6709, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KTWB 92.5FM", "Latitude": 43.5925, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KYBB 102.7FM", "Latitude": 43.5925, "Longitude": -96.6392, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KNBZ 97.7FM", "Latitude": 45.4644, "Longitude": -98.4861, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KSDN 94.1FM", "Latitude": 45.4644, "Longitude": -98.4861, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KDVL 102.5FM", "Latitude": 47.9878, "Longitude": -98.9333, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> <br>"}, {"Name": "KZZY 103.5FM", "Latitude": 47.9803, "Longitude": -99.0533, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KRVX 103.1FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Classic Rock<br> <b>Station Rank:</b> <br>"}, {"Name": "KYNU 95.5FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> <br>"}, {"Name": "KARP 106.9FM", "Latitude": 44.9583, "Longitude": -94.2025, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KGLB 1310AM", "Latitude": 44.9583, "Longitude": -94.2025, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KMIT 105.9FM", "Latitude": 43.7094, "Longitude": -98.0292, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KQRN 107.3FM", "Latitude": 43.7094, "Longitude": -98.0292, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KTHC 95.1FM", "Latitude": 47.6, "Longitude": -97, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KYYZ 96.1FM", "Latitude": 48.25, "Longitude": -101.3, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KDLO 96.9FM", "Latitude": 44.9, "Longitude": -97.1, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KPHR 106.3FM", "Latitude": 46.9, "Longitude": -96.8, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KXLG 99.1FM", "Latitude": 44.9, "Longitude": -97.1, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> <br>"}, {"Name": "KDSR 101.1FM", "Latitude": 48.2, "Longitude": -101.3, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KEYZ 660AM", "Latitude": 48.2, "Longitude": -103.6, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #3<br>"}, {"Name": "KDAM 94.3FM", "Latitude": 47.9, "Longitude": -97, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KVHT 106.3FM", "Latitude": 42.8, "Longitude": -96.9, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KAUS 1480AM", "Latitude": 43.6281, "Longitude": -93.1536, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> News<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KAUS 99.9FM", "Latitude": 43.7, "Longitude": -96.7, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KFNL 104.3FM", "Latitude": 43.7, "Longitude": -96.7, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Oldies<br> <b>Station Rank:</b> #4<br>"}, {"Name": "KRCH 101.7FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Rock<br> <b>Station Rank:</b> #3T<br>"}, {"Name": "KCTR 102.9FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Country<br> <b>Station Rank:</b> #1<br>"}, {"Name": "KPLN 106.7FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Contemporary<br> <b>Station Rank:</b> #2<br>"}, {"Name": "KRSQ 101.9FM", "Latitude": 45.8, "Longitude": -108.5, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br> <b>Station Rank:</b> #3<br>"},
+  ];
 
-    const colors = {
-      "Station": "#1E90FF",
-      "Store": "#FF6347"
-    };
+  const colors = {
+    "Station": "#1E90FF",
+    "Store": "#FF6347"
+  };
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
-        center: { lat: 39.5, lng: -98.35 },
-        gestureHandling: "greedy",
-        disableDefaultUI: false
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 5,
+      center: { lat: 39.5, lng: -98.35 },
+      gestureHandling: "greedy",
+      disableDefaultUI: false
+    });
+
+    const hoverInfoWindow = new google.maps.InfoWindow();
+
+    locations.forEach((loc) => {
+      const position = { lat: loc.Latitude, lng: loc.Longitude };
+      const color = colors[loc.Type] || "#000";
+
+      const circle = new google.maps.Circle({
+        strokeColor: color,
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: color,
+        fillOpacity: 0.25,
+        map: loc.Type === "Station" ? map : null,
+        center: position,
+        radius: loc.Radius * 1609.34
       });
 
-      locations.forEach((loc) => {
-        const position = { lat: loc.Latitude, lng: loc.Longitude };
-        const color = colors[loc.Type] || "#000";
-
-        const circle = new google.maps.Circle({
-          strokeColor: color,
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
+      const marker = new google.maps.Marker({
+        position,
+        map,
+        title: loc.Name,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 7,
           fillColor: color,
-          fillOpacity: 0.25,
-          map: loc.Type === "Station" ? map : null,
-          center: position,
-          radius: loc.Radius * 1609.34
-        });
+          fillOpacity: 1,
+          strokeWeight: 1,
+          strokeColor: "#fff"
+        }
+      });
 
-        const marker = new google.maps.Marker({
-          position,
-          map,
-          title: loc.Name,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 7,
-            fillColor: color,
-            fillOpacity: 1,
-            strokeWeight: 1,
-            strokeColor: "#fff"
-          }
-        });
-
-        const infoWindow = new google.maps.InfoWindow({
-          content: `<strong>${loc.Name}</strong><br>${loc.Info || ""}`
-        });
+      if (loc.Type === "Store") {
+        storeMarkers.push(marker);
 
         marker.addListener("mouseover", () => {
-          infoWindow.open(map, marker);
+          const stationsInRange = stationCircles
+            .map(circle => {
+              const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(loc.Latitude, loc.Longitude),
+                circle.getCenter()
+              );
+              if (distance <= circle.getRadius()) {
+                const station = locations.find(l =>
+                  l.Type === "Station" &&
+                  l.Latitude === circle.getCenter().lat() &&
+                  l.Longitude === circle.getCenter().lng()
+                );
+                return station?.Name;
+              }
+              return null;
+            })
+            .filter(Boolean);
+
+          const info = `
+            <strong>${loc.Name}</strong><br>
+            ${loc.Info}<br>
+            <b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join(", ") : "None"}
+          `;
+          hoverInfoWindow.setContent(info);
+          hoverInfoWindow.open(map, marker);
         });
 
         marker.addListener("mouseout", () => {
-          infoWindow.close();
+          hoverInfoWindow.close();
         });
 
-        marker.addListener("click", () => {
-          if (loc.Type === "Store") {
-            const coveredBy = stationCircles.filter(station => {
-              const dist = google.maps.geometry.spherical.computeDistanceBetween(
-                new google.maps.LatLng(loc.Latitude, loc.Longitude),
-                station.getCenter()
-              );
-              return dist <= station.getRadius();
-            }).map((s, i) => locations.find(l => l.Type === "Station" && l.Latitude === s.getCenter().lat() && l.Longitude === s.getCenter().lng()).Name);
+      } else if (loc.Type === "Station") {
+        stationMarkers.push(marker);
+        stationCircles.push(circle);
 
-            const info = `<strong>${loc.Name}</strong><br>${loc.Info}<br><b>In Range Of:</b><br>${coveredBy.join(", ") || "None"}`;
-            infoWindow.setContent(info);
-          }
-
-          infoWindow.open(map, marker);
+        circle.addListener("mouseover", (e) => {
+          const info = `<strong>${loc.Name}</strong><br>${loc.Info}`;
+          hoverInfoWindow.setContent(info);
+          hoverInfoWindow.setPosition(e.latLng);
+          hoverInfoWindow.open(map);
         });
 
-        infoWindows.push(infoWindow);
-
-        if (loc.Type === "Station") {
-          stationMarkers.push(marker);
-          stationCircles.push(circle);
-        } else {
-          storeMarkers.push(marker);
-        }
-      });
-
-      // Event listeners
-      document.getElementById("storeSearchBtn").addEventListener("click", () => {
-        const value = document.getElementById("storeSearchBox").value.trim().toLowerCase();
-        if (!value) return;
-
-        const match = storeMarkers.find(marker => {
-          const title = marker.getTitle().toLowerCase();
-          const matchNum = title.match(/#?(\d+)/);
-          return (
-            title.includes(value) ||
-            (matchNum && matchNum[1] === value.replace("#", ""))
-          );
+        circle.addListener("mouseout", () => {
+          hoverInfoWindow.close();
         });
+      }
+    });
 
-        if (match) {
-          map.panTo(match.getPosition());
-          map.setZoom(8);
-        } else {
-          alert("No matching store found.");
-        }
-      });
+    document.getElementById("storeSearchBtn").addEventListener("click", () => {
+      const value = document.getElementById("storeSearchBox").value.trim().toLowerCase();
+      if (!value) return;
 
-      document.getElementById("stationSearchBtn").addEventListener("click", () => {
-        const value = document.getElementById("stationSearchBox").value.trim().toLowerCase();
-        if (!value) return;
-
-        const match = stationMarkers.find(marker => marker.getTitle().toLowerCase().includes(value));
-        if (match) {
-          map.panTo(match.getPosition());
-          map.setZoom(8);
-        } else {
-          alert("No matching station found.");
-        }
-      });
-
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        document.getElementById("storeSearchBox").value = "";
-        document.getElementById("stationSearchBox").value = "";
-        map.setZoom(5);
-        map.setCenter({ lat: 39.5, lng: -98.35 });
-      });
-    }
-const hoverInfoWindow = new google.maps.InfoWindow();
-
-storeMarkers.forEach(marker => {
-  const loc = locations.find(l => l.Name === marker.getTitle());
-
-  marker.addListener("mouseover", () => {
-    const stationsInRange = stationCircles
-      .map(circle => {
-        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-          new google.maps.LatLng(loc.Latitude, loc.Longitude),
-          circle.getCenter()
+      const match = storeMarkers.find(marker => {
+        const title = marker.getTitle().toLowerCase();
+        const matchNum = title.match(/#?(\d+)/);
+        return (
+          title.includes(value) ||
+          (matchNum && matchNum[1] === value.replace("#", ""))
         );
-        if (distance <= circle.getRadius()) {
-          const station = locations.find(l =>
-            l.Type === "Station" &&
-            l.Latitude === circle.getCenter().lat() &&
-            l.Longitude === circle.getCenter().lng()
-          );
-          return station?.Name;
+      });
+
+      if (match) {
+        map.setCenter(match.getPosition());
+        map.setZoom(8);
+
+        if (highlightedMarker) {
+          resetMarkerIcon(highlightedMarker);
+          highlightedMarker = null;
         }
-        return null;
-      })
-      .filter(Boolean);
 
-    const infoContent = `
-      <strong>${loc.Name}</strong><br>
-      ${loc.Info}<br>
-      <b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join(", ") : "None"}
-    `;
+        highlightedMarker = match;
+        match.setIcon({
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#FFD700",
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: "#B8860B"
+        });
+      } else {
+        alert("No matching store found.");
+      }
+    });
 
-    hoverInfoWindow.setContent(infoContent);
-    hoverInfoWindow.open(map, marker);
-  });
+    document.getElementById("stationSearchBtn").addEventListener("click", () => {
+      const value = document.getElementById("stationSearchBox").value.trim().toLowerCase();
+      if (!value) return;
 
-  marker.addListener("mouseout", () => {
-    hoverInfoWindow.close();
-  });
-});
+      const match = stationMarkers.find(marker =>
+        marker.getTitle().toLowerCase().includes(value)
+      );
 
-    window.onload = initMap;
-  </script>
+      if (match) {
+        map.setCenter(match.getPosition());
+        map.setZoom(8);
+      } else {
+        alert("No matching station found.");
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("storeSearchBox").value = "";
+      document.getElementById("stationSearchBox").value = "";
+      map.setZoom(5);
+      map.setCenter({ lat: 39.5, lng: -98.35 });
+
+      if (highlightedMarker) {
+        resetMarkerIcon(highlightedMarker);
+        highlightedMarker = null;
+      }
+    });
+  }
+
+  function resetMarkerIcon(marker) {
+    marker.setIcon({
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 7,
+      fillColor: "#FF6347",
+      fillOpacity: 1,
+      strokeWeight: 1,
+      strokeColor: "#fff"
+    });
+  }
+
+  window.onload = initMap;
+</script>
 </body>
 </html>
