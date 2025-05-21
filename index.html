@@ -62,8 +62,6 @@
   <div id="controls">
     <input id="searchBox" type="text" placeholder="Search for store..." />
     <button id="resetBtn" class="control-btn">Reset</button>
-    <button class="control-btn" onclick="zoomToState('MN')">Go to Minnesota</button>
-    <button class="control-btn" onclick="zoomToState('CA')">Go to California</button>
   </div>
 
   <div id="map"></div>
@@ -99,7 +97,7 @@
         center: { lat: 39.5, lng: -98.35 }
       });
 
-      locations.forEach((loc, index) => {
+      locations.forEach((loc) => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
         const color = colors[loc.Type] || "#000";
 
@@ -133,7 +131,6 @@
         marker.addListener("mouseover", () => infoWindow.open(map, marker));
         marker.addListener("mouseout", () => infoWindow.close());
 
-        // Circle hover
         circle.addListener("mouseover", (e) => {
           infoWindow.setPosition(e.latLng);
           infoWindow.setContent(loc.Name);
@@ -164,59 +161,40 @@
     function handleSearch() {
       const searchTerm = document.getElementById("searchBox").value.toLowerCase();
 
-      storeMarkers.forEach(m => m.setVisible(false));
-      stationMarkers.forEach(m => m.setVisible(false));
-      stationCircles.forEach(c => c.setMap(null));
-
-      const store = locations.find(l =>
-        l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
+      const match = locations.find(
+        l => l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
       );
-      if (!store) return;
 
-      const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
-      map.setCenter(storeLatLng);
-      map.setZoom(10);
+      if (match) {
+        const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
+        
+        // Smooth pan
+        map.panTo(latLng);
+        map.setZoom(10);
 
-      const storeMarker = storeMarkers.find(m => m.getTitle() === store.Name);
-      if (storeMarker) storeMarker.setVisible(true);
+        // Highlight marker
+        const marker = storeMarkers.find(m => m.getTitle().toLowerCase().includes(searchTerm));
+        if (marker) {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
 
-      locations.forEach((loc, idx) => {
-        if (loc.Type === "Station") {
-          const stationLatLng = new google.maps.LatLng(loc.Latitude, loc.Longitude);
-          const radiusMeters = loc.Radius * 1609.34;
-          const distance = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+          const originalIcon = marker.getIcon();
+          marker.setIcon({
+            ...originalIcon,
+            fillColor: "#FFD700"  // Gold
+          });
 
-          if (distance <= radiusMeters) {
-            stationMarkers[idx].setVisible(true);
-            stationCircles[idx].setMap(map);
-          }
+          setTimeout(() => {
+            marker.setAnimation(null);
+            marker.setIcon(originalIcon);
+          }, 2000);
         }
-      });
+      }
     }
 
     function resetMap() {
       document.getElementById("searchBox").value = "";
       map.setZoom(5);
       map.setCenter({ lat: 39.5, lng: -98.35 });
-
-      storeMarkers.forEach(m => m.setVisible(true));
-      stationMarkers.forEach(m => m.setVisible(true));
-      stationCircles.forEach(c => c.setMap(map));
-    }
-
-    function zoomToState(state) {
-      const bounds = new google.maps.LatLngBounds();
-
-      locations.forEach(loc => {
-        if ((state === "MN" && loc.Latitude > 43 && loc.Latitude < 48) ||
-            (state === "CA" && loc.Latitude > 32 && loc.Latitude < 38)) {
-          bounds.extend({ lat: loc.Latitude, lng: loc.Longitude });
-        }
-      });
-
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds);
-      }
     }
 
     window.onload = initMap;
