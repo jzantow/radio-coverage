@@ -75,12 +75,17 @@
     .legend-color.store {
       background: #FF6347;
     }
+
+    /* Hide close button on Google Maps InfoWindow */
+    .gm-style-iw > button.gm-ui-hover-effect {
+      display: none !important;
+    }
   </style>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
   <div id="controls">
-    <input id="searchBox" type="text" placeholder="Search for store..." />
+    <input id="searchBox" type="text" placeholder="Search for store by # (e.g. 67)" />
     <button id="searchBtn" class="control-btn">Search</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
@@ -189,13 +194,17 @@
     }
 
     function handleSearch() {
-      const searchTerm = document.getElementById("searchBox").value.toLowerCase().trim();
+      const searchTerm = document.getElementById("searchBox").value.trim();
 
       if (!searchTerm) return;  // ignore empty search
 
-      const match = locations.find(
-        l => l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
-      );
+      // Find the store whose number matches exactly the search term
+      const match = locations.find(l => {
+        if (l.Type !== "Store") return false;
+        const matchNum = l.Name.match(/#(\d+)/);
+        if (!matchNum) return false;
+        return matchNum[1] === searchTerm;
+      });
 
       if (match) {
         const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
@@ -203,17 +212,19 @@
         map.panTo(latLng);
         map.setZoom(8);  // Adjust zoom here if needed
 
-        // Remove highlight from previously highlighted marker
         if (highlightedMarker) {
           resetMarkerIcon(highlightedMarker);
           highlightedMarker = null;
         }
 
-        // Highlight the marker
-        const marker = storeMarkers.find(m => m.getTitle().toLowerCase().includes(searchTerm));
+        const marker = storeMarkers.find(m => {
+          const title = m.getTitle();
+          const markerNum = title.match(/#(\d+)/);
+          return markerNum && markerNum[1] === searchTerm;
+        });
+
         if (marker) {
           highlightedMarker = marker;
-
           marker.setIcon({
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
@@ -243,7 +254,6 @@
     function resetMap() {
       document.getElementById("searchBox").value = "";
 
-      // Remove highlight from marker if any
       if (highlightedMarker) {
         resetMarkerIcon(highlightedMarker);
         highlightedMarker = null;
