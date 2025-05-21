@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map</title>
+  <title>Radio Coverage Map with Hover Info</title>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE"></script>
   <script>
     function initMap() {
@@ -15,7 +15,7 @@
           Name: "KAUS-FM",
           Latitude: 43.628293,
           Longitude: -93.153534,
-          Radius: 100 // miles
+          Radius: 90 // miles
         },
         {
           Name: "Austin #467",
@@ -28,7 +28,6 @@
       locations.forEach(loc => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
 
-        // Draw circle with radius converted from miles to meters
         new google.maps.Circle({
           strokeColor: "#007BFF",
           strokeOpacity: 0.8,
@@ -40,11 +39,22 @@
           radius: loc.Radius * 1609.34
         });
 
-        // Add marker
-        new google.maps.Marker({
+        const marker = new google.maps.Marker({
           position: center,
           map,
           title: loc.Name
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: loc.Name
+        });
+
+        marker.addListener('mouseover', () => {
+          infoWindow.open(map, marker);
+        });
+
+        marker.addListener('mouseout', () => {
+          infoWindow.close();
         });
       });
     }
