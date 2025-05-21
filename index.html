@@ -101,7 +101,7 @@
     let infoWindows = [];
     let highlightedMarker = null;
 
-    // Updated location data
+    // Updated location data with store click info adjusted (Region and Date Opened)
     const locations = [
       {
         Name: "KAUS-FM",
@@ -156,9 +156,6 @@
         center: { lat: 39.5, lng: -98.35 }
       });
 
-      // Reusable hover info window
-      const hoverInfoWindow = new google.maps.InfoWindow();
-
       locations.forEach((loc) => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
         const color = colors[loc.Type] || "#000";
@@ -177,7 +174,7 @@
         const marker = new google.maps.Marker({
           position: center,
           map,
-          title: loc.Name, // native tooltip fallback (may not show reliably)
+          title: loc.Name, // This shows on hover (native tooltip)
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 7,
@@ -188,17 +185,9 @@
           }
         });
 
-        // Hover tooltip: show only name
-        marker.addListener("mouseover", () => {
-          hoverInfoWindow.setContent(loc.Name);
-          hoverInfoWindow.open(map, marker);
-        });
-        marker.addListener("mouseout", () => {
-          hoverInfoWindow.close();
-        });
-
-        // Click info window: full info
+        // InfoWindow content on click: show full info
         const infoWindowContent = `<strong>${loc.Name}</strong><br>${loc.Info || ""}`;
+
         const infoWindow = new google.maps.InfoWindow({
           content: infoWindowContent
         });
@@ -311,7 +300,7 @@
       map.setCenter({ lat: 39.5, lng: -98.35 });
     }
 
-    window.initMap = initMap;
+    window.onload = initMap;
   </script>
 </body>
 </html>
