@@ -101,7 +101,7 @@
     let infoWindows = [];
     let highlightedMarker = null;
 
-    // Updated location data with station and store info windows content
+    // Updated location data with store click info adjusted (Region and Date Opened)
     const locations = [
       {
         Name: "KAUS-FM",
@@ -117,7 +117,7 @@
         Longitude: -92.98044283,
         Radius: 5,
         Type: "Store",
-        Info: "<b>Austin</b><br>Store #: 467<br>Region: North Central<br>Date Opened: 2024"
+        Info: "Region: North Central<br>Date Opened: 2024"
       },
       {
         Name: "Bakersfield Buck Owens #566",
@@ -125,7 +125,7 @@
         Longitude: -119.042628,
         Radius: 1,
         Type: "Store",
-        Info: "<b>Bakersfield Buck Owens</b><br>Store #: 566<br>Region: Inland Empire<br>Date Opened: 2023"
+        Info: "Region: Inland Empire<br>Date Opened: 2023"
       },
       {
         Name: "Bakersfield Calloway Dr #67",
@@ -133,7 +133,7 @@
         Longitude: -119.110601,
         Radius: 1,
         Type: "Store",
-        Info: "<b>Bakersfield Calloway Dr</b><br>Store #: 67<br>Region: Inland Empire<br>Date Opened: 2025"
+        Info: "Region: Inland Empire<br>Date Opened: 2025"
       },
       {
         Name: "KUZZ-FM",
@@ -174,7 +174,7 @@
         const marker = new google.maps.Marker({
           position: center,
           map,
-          title: loc.Name,
+          title: loc.Name, // This shows on hover (native tooltip)
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 7,
@@ -185,15 +185,14 @@
           }
         });
 
-        marker.setTitle(loc.Name); // native tooltip on hover
+        // InfoWindow content on click: show full info
+        const infoWindowContent = `<strong>${loc.Name}</strong><br>${loc.Info || ""}`;
 
-        // InfoWindow for stations and stores
         const infoWindow = new google.maps.InfoWindow({
-          content: `<strong>${loc.Name}</strong><br>${loc.Info || ""}`
+          content: infoWindowContent
         });
 
         marker.addListener("click", () => {
-          // Close any open info windows
           infoWindows.forEach(iw => iw.close());
           infoWindow.open(map, marker);
         });
