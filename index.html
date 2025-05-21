@@ -796,6 +796,44 @@
         map.setCenter({ lat: 39.5, lng: -98.35 });
       });
     }
+const hoverInfoWindow = new google.maps.InfoWindow();
+
+storeMarkers.forEach(marker => {
+  const loc = locations.find(l => l.Name === marker.getTitle());
+
+  marker.addListener("mouseover", () => {
+    const stationsInRange = stationCircles
+      .map(circle => {
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(loc.Latitude, loc.Longitude),
+          circle.getCenter()
+        );
+        if (distance <= circle.getRadius()) {
+          const station = locations.find(l =>
+            l.Type === "Station" &&
+            l.Latitude === circle.getCenter().lat() &&
+            l.Longitude === circle.getCenter().lng()
+          );
+          return station?.Name;
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    const infoContent = `
+      <strong>${loc.Name}</strong><br>
+      ${loc.Info}<br>
+      <b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join(", ") : "None"}
+    `;
+
+    hoverInfoWindow.setContent(infoContent);
+    hoverInfoWindow.open(map, marker);
+  });
+
+  marker.addListener("mouseout", () => {
+    hoverInfoWindow.close();
+  });
+});
 
     window.onload = initMap;
   </script>
