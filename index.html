@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Radio Coverage Map</title>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <style>
     html, body, #map {
       height: 100%;
@@ -16,11 +16,12 @@
       left: 10px;
       z-index: 5;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 5px;
+      align-items: center;
     }
 
-    #searchBox, .control-btn {
+    #searchBox {
       width: 250px;
       padding: 8px;
       font-size: 14px;
@@ -30,6 +31,17 @@
       background: white;
     }
 
+    .control-btn {
+      padding: 8px 12px;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+    }
+
     #legend {
       background: white;
       padding: 10px;
@@ -37,6 +49,10 @@
       font-family: Arial, sans-serif;
       font-size: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
     }
 
     .legend-color {
@@ -61,10 +77,12 @@
 <body>
   <div id="controls">
     <input id="searchBox" type="text" placeholder="Search for store..." />
+    <button id="searchBtn" class="control-btn">Search</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
 
   <div id="map"></div>
+
   <div id="legend">
     <h3>Legend</h3>
     <p><span class="legend-color station"></span> Station</p>
@@ -151,15 +169,24 @@
       const legend = document.getElementById("legend");
       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
-      // Search
-      document.getElementById("searchBox").addEventListener("input", handleSearch);
+      // Search on Enter key
+      document.getElementById("searchBox").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          handleSearch();
+        }
+      });
 
-      // Reset
+      // Search button
+      document.getElementById("searchBtn").addEventListener("click", handleSearch);
+
+      // Reset button
       document.getElementById("resetBtn").addEventListener("click", resetMap);
     }
 
     function handleSearch() {
-      const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+      const searchTerm = document.getElementById("searchBox").value.toLowerCase().trim();
+
+      if (!searchTerm) return;  // ignore empty search
 
       const match = locations.find(
         l => l.Type === "Store" && l.Name.toLowerCase().includes(searchTerm)
@@ -167,27 +194,33 @@
 
       if (match) {
         const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
-        
-        // Smooth pan
+
         map.panTo(latLng);
         map.setZoom(10);
 
-        // Highlight marker
+        // Highlight the marker
         const marker = storeMarkers.find(m => m.getTitle().toLowerCase().includes(searchTerm));
         if (marker) {
           marker.setAnimation(google.maps.Animation.BOUNCE);
 
           const originalIcon = marker.getIcon();
+          const originalFillColor = originalIcon.fillColor;
+
           marker.setIcon({
             ...originalIcon,
-            fillColor: "#FFD700"  // Gold
+            fillColor: "#FFD700"  // Gold highlight
           });
 
           setTimeout(() => {
             marker.setAnimation(null);
-            marker.setIcon(originalIcon);
+            marker.setIcon({
+              ...originalIcon,
+              fillColor: originalFillColor
+            });
           }, 2000);
         }
+      } else {
+        alert("No matching store found.");
       }
     }
 
