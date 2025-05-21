@@ -80,7 +80,7 @@
 </head>
 <body>
   <div id="controls">
-    <input id="searchBox" type="text" placeholder="Search for store by # (e.g. 67)" />
+    <input id="searchBox" type="text" placeholder="Search for store by # or name (e.g. 67 or #67 or Bakersfield)" />
     <button id="searchBtn" class="control-btn">Search</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
@@ -101,6 +101,7 @@
     let infoWindows = [];
     let highlightedMarker = null;
 
+    // Locations data with store click info (Region and Date Opened)
     const locations = [
       {
         Name: "KAUS-FM",
@@ -173,7 +174,7 @@
         const marker = new google.maps.Marker({
           position: center,
           map,
-          title: loc.Name,
+          title: loc.Name, // Native tooltip on hover
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 7,
@@ -210,29 +211,48 @@
         infoWindows.push(infoWindow);
       });
 
+      // Legend
       const legend = document.getElementById("legend");
       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
+      // Search on Enter key
       document.getElementById("searchBox").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           handleSearch();
         }
       });
 
+      // Search button
       document.getElementById("searchBtn").addEventListener("click", handleSearch);
+
+      // Reset button
       document.getElementById("resetBtn").addEventListener("click", resetMap);
     }
 
     function handleSearch() {
-      const searchTerm = document.getElementById("searchBox").value.trim();
-      if (!searchTerm) return;
+      const searchTermRaw = document.getElementById("searchBox").value.trim();
+      if (!searchTermRaw) return;
 
-      const match = locations.find(l => {
+      const searchTerm = searchTermRaw.toLowerCase();
+
+      // Remove # if present, for number match
+      let storeNumber = searchTerm.replace(/^#/, "");
+
+      // Try exact store number match first
+      let match = locations.find(l => {
         if (l.Type !== "Store") return false;
         const matchNum = l.Name.match(/#(\d+)/);
         if (!matchNum) return false;
-        return matchNum[1] === searchTerm;
+        return matchNum[1] === storeNumber;
       });
+
+      // If no exact number match, try substring match on name
+      if (!match) {
+        match = locations.find(l => {
+          if (l.Type !== "Store") return false;
+          return l.Name.toLowerCase().includes(searchTerm);
+        });
+      }
 
       if (match) {
         const latLng = new google.maps.LatLng(match.Latitude, match.Longitude);
@@ -245,11 +265,7 @@
           highlightedMarker = null;
         }
 
-        const marker = storeMarkers.find(m => {
-          const title = m.getTitle();
-          const markerNum = title.match(/#(\d+)/);
-          return markerNum && markerNum[1] === searchTerm;
-        });
+        const marker = storeMarkers.find(m => m.getTitle() === match.Name);
 
         if (marker) {
           highlightedMarker = marker;
