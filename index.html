@@ -9,14 +9,12 @@
       margin: 0;
       padding: 0;
     }
-
     #controls {
       position: absolute;
       top: 60px;
       left: 10px;
       z-index: 5;
       display: flex;
-      flex-direction: row;
       gap: 5px;
       align-items: center;
       background: rgba(255, 255, 255, 0.9);
@@ -24,7 +22,6 @@
       border-radius: 5px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-
     #searchBox {
       width: 250px;
       padding: 8px;
@@ -33,7 +30,6 @@
       border-radius: 4px;
       background: white;
     }
-
     .control-btn {
       padding: 8px 12px;
       font-size: 14px;
@@ -44,7 +40,6 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
-
     #legend {
       background: white;
       padding: 10px;
@@ -58,7 +53,6 @@
       z-index: 5;
       border-radius: 5px;
     }
-
     .legend-color {
       display: inline-block;
       width: 15px;
@@ -67,11 +61,9 @@
       vertical-align: middle;
       border-radius: 3px;
     }
-
     .legend-color.station {
       background: #1E90FF;
     }
-
     .legend-color.store {
       background: #FF6347;
     }
@@ -80,13 +72,11 @@
 </head>
 <body>
   <div id="controls">
-    <input id="searchBox" type="text" placeholder="Search for store by # (e.g. 67)" />
+    <input id="searchBox" type="text" placeholder="Search store # (e.g. 67)" />
     <button id="searchBtn" class="control-btn">Search</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
-
   <div id="map"></div>
-
   <div id="legend">
     <h3>Legend</h3>
     <p><span class="legend-color station"></span> Station</p>
@@ -101,7 +91,6 @@
     let infoWindows = [];
     let highlightedMarker = null;
 
-    // Updated location data with store click info adjusted (Region and Date Opened)
     const locations = [
       {
         Name: "KAUS-FM",
@@ -156,6 +145,8 @@
         center: { lat: 39.5, lng: -98.35 }
       });
 
+      const hoverInfoWindow = new google.maps.InfoWindow();
+
       locations.forEach((loc) => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
         const color = colors[loc.Type] || "#000";
@@ -174,7 +165,7 @@
         const marker = new google.maps.Marker({
           position: center,
           map,
-          title: loc.Name, // This shows on hover (native tooltip)
+          title: loc.Name,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 7,
@@ -185,11 +176,18 @@
           }
         });
 
-        // InfoWindow content on click: show full info
-        const infoWindowContent = `<strong>${loc.Name}</strong><br>${loc.Info || ""}`;
+        // Hover tooltip shows only the name
+        marker.addListener("mouseover", () => {
+          hoverInfoWindow.setContent(loc.Name);
+          hoverInfoWindow.open(map, marker);
+        });
+        marker.addListener("mouseout", () => {
+          hoverInfoWindow.close();
+        });
 
+        // Click shows full info
         const infoWindow = new google.maps.InfoWindow({
-          content: infoWindowContent
+          content: `<strong>${loc.Name}</strong><br>${loc.Info || ""}`
         });
 
         marker.addListener("click", () => {
@@ -212,30 +210,24 @@
         infoWindows.push(infoWindow);
       });
 
-      // Legend
       const legend = document.getElementById("legend");
       map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 
-      // Search on Enter key
       document.getElementById("searchBox").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           handleSearch();
         }
       });
 
-      // Search button
       document.getElementById("searchBtn").addEventListener("click", handleSearch);
-
-      // Reset button
       document.getElementById("resetBtn").addEventListener("click", resetMap);
     }
 
     function handleSearch() {
       const searchTerm = document.getElementById("searchBox").value.trim();
 
-      if (!searchTerm) return;  // ignore empty search
+      if (!searchTerm) return;
 
-      // Find the store whose number matches exactly the search term
       const match = locations.find(l => {
         if (l.Type !== "Store") return false;
         const matchNum = l.Name.match(/#(\d+)/);
@@ -300,7 +292,7 @@
       map.setCenter({ lat: 39.5, lng: -98.35 });
     }
 
-    window.onload = initMap;
+    window.initMap = initMap;
   </script>
 </body>
 </html>
