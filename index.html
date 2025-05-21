@@ -716,37 +716,20 @@
 {"Name": "KRVX-FM", "Latitude": 46.9392, "Longitude": -98.3086, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br><b>Station Rank:</b> #1"},
 {"Name": "KDVL-FM", "Latitude": 47.9878, "Longitude": -98.9333, "Radius": 60, "Type": "Station", "Info": "<b>Genre:</b> Top 40<br><b>Station Rank:</b> #1"},];
 
-    const colors = {
-      Station: "#1E90FF",
-      Store: "#FF6347"
+const colors = {
+      "Station": "#1E90FF",
+      "Store": "#FF6347"
     };
-
-    function getStationsInRange(lat, lng) {
-      return stationCircles
-        .map((circle, i) => {
-          const dist = google.maps.geometry.spherical.computeDistanceBetween(
-            new google.maps.LatLng(lat, lng),
-            circle.getCenter()
-          );
-          if (dist <= circle.getRadius()) {
-            return locations.find(l =>
-              l.Type === "Station" &&
-              l.Latitude === circle.getCenter().lat() &&
-              l.Longitude === circle.getCenter().lng()
-            )?.Name;
-          }
-          return null;
-        })
-        .filter(Boolean);
-    }
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
-        center: { lat: 39.5, lng: -98.35 }
+        center: { lat: 39.5, lng: -98.35 },
+        gestureHandling: "greedy",
+        disableDefaultUI: false
       });
 
-      locations.forEach(loc => {
+      locations.forEach((loc) => {
         const position = { lat: loc.Latitude, lng: loc.Longitude };
         const color = colors[loc.Type] || "#000";
 
@@ -775,31 +758,46 @@
           }
         });
 
-        const infoWindow = new google.maps.InfoWindow();
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<strong>${loc.Name}</strong><br>${loc.Info || ""}`
+        });
 
         marker.addListener("mouseover", () => {
-          if (loc.Type === "Store") {
-            const stations = getStationsInRange(loc.Latitude, loc.Longitude);
-            const content = `<strong>${loc.Name}</strong><br>${loc.Info}<br><b>In Range Of:</b><br>${stations.join(", ") || "None"}`;
-            infoWindow.setContent(content);
-            infoWindow.open(map, marker);
-          } else {
-            infoWindow.setContent(`<strong>${loc.Name}</strong><br>${loc.Info}`);
-            infoWindow.open(map, marker);
-          }
+          infoWindow.open(map, marker);
         });
 
         marker.addListener("mouseout", () => {
           infoWindow.close();
         });
 
-        if (loc.Type === "Store") storeMarkers.push(marker);
-        else {
+        marker.addListener("click", () => {
+          if (loc.Type === "Store") {
+            const coveredBy = stationCircles.filter(station => {
+              const dist = google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(loc.Latitude, loc.Longitude),
+                station.getCenter()
+              );
+              return dist <= station.getRadius();
+            }).map((s, i) => locations.find(l => l.Type === "Station" && l.Latitude === s.getCenter().lat() && l.Longitude === s.getCenter().lng()).Name);
+
+            const info = `<strong>${loc.Name}</strong><br>${loc.Info}<br><b>In Range Of:</b><br>${coveredBy.join(", ") || "None"}`;
+            infoWindow.setContent(info);
+          }
+
+          infoWindow.open(map, marker);
+        });
+
+        infoWindows.push(infoWindow);
+
+        if (loc.Type === "Station") {
           stationMarkers.push(marker);
           stationCircles.push(circle);
+        } else {
+          storeMarkers.push(marker);
         }
       });
 
+      // Event listeners
       document.getElementById("storeSearchBtn").addEventListener("click", () => {
         const value = document.getElementById("storeSearchBox").value.trim().toLowerCase();
         if (!value) return;
@@ -813,20 +811,9 @@
           );
         });
 
-        if (highlightedMarker) resetMarkerIcon(highlightedMarker);
-
         if (match) {
-          highlightedMarker = match;
-          match.setIcon({
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "#FFD700",
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: "#B8860B"
-          });
+          map.panTo(match.getPosition());
           map.setZoom(8);
-          map.setCenter(match.getPosition());
         } else {
           alert("No matching store found.");
         }
@@ -838,8 +825,8 @@
 
         const match = stationMarkers.find(marker => marker.getTitle().toLowerCase().includes(value));
         if (match) {
+          map.panTo(match.getPosition());
           map.setZoom(8);
-          map.setCenter(match.getPosition());
         } else {
           alert("No matching station found.");
         }
@@ -848,21 +835,8 @@
       document.getElementById("resetBtn").addEventListener("click", () => {
         document.getElementById("storeSearchBox").value = "";
         document.getElementById("stationSearchBox").value = "";
-        if (highlightedMarker) resetMarkerIcon(highlightedMarker);
-        highlightedMarker = null;
         map.setZoom(5);
         map.setCenter({ lat: 39.5, lng: -98.35 });
-      });
-    }
-
-    function resetMarkerIcon(marker) {
-      marker.setIcon({
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 7,
-        fillColor: colors["Store"],
-        fillOpacity: 1,
-        strokeWeight: 1,
-        strokeColor: "#fff"
       });
     }
 
