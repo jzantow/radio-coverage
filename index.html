@@ -1,8 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map with Hover Info</title>
+  <title>Radio Coverage Map with Legend</title>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE"></script>
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0; padding: 0;
+    }
+    #legend {
+      background: white;
+      padding: 10px;
+      margin: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .legend-color {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 3px;
+    }
+    .legend-color.station {
+      background: #1E90FF;
+    }
+    .legend-color.store {
+      background: #FF6347;
+    }
+  </style>
   <script>
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
@@ -10,29 +38,37 @@
         center: { lat: 43.65, lng: -93 },
       });
 
+      const colors = {
+        "Station": "#1E90FF",
+        "Store": "#FF6347"
+      };
+
       const locations = [
         {
           Name: "KAUS-FM",
           Latitude: 43.628293,
           Longitude: -93.153534,
-          Radius: 90 // miles
+          Radius: 90,
+          Type: "Station"
         },
         {
           Name: "Austin #467",
           Latitude: 43.685315,
           Longitude: -92.98044283,
-          Radius: 5 // miles
+          Radius: 5,
+          Type: "Store"
         }
       ];
 
       locations.forEach(loc => {
         const center = { lat: loc.Latitude, lng: loc.Longitude };
+        const color = colors[loc.Type] || "#000000";
 
         new google.maps.Circle({
-          strokeColor: "#007BFF",
+          strokeColor: color,
           strokeOpacity: 0.8,
           strokeWeight: 2,
-          fillColor: "#007BFF",
+          fillColor: color,
           fillOpacity: 0.25,
           map,
           center: center,
@@ -42,7 +78,15 @@
         const marker = new google.maps.Marker({
           position: center,
           map,
-          title: loc.Name
+          title: loc.Name,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 7,
+            fillColor: color,
+            fillOpacity: 1,
+            strokeWeight: 1,
+            strokeColor: "#fff",
+          }
         });
 
         const infoWindow = new google.maps.InfoWindow({
@@ -57,16 +101,19 @@
           infoWindow.close();
         });
       });
+
+      // Add legend to map
+      const legend = document.getElementById('legend');
+      map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
     }
   </script>
-  <style>
-    html, body, #map {
-      height: 100%;
-      margin: 0; padding: 0;
-    }
-  </style>
 </head>
 <body onload="initMap()">
   <div id="map"></div>
+  <div id="legend">
+    <h3>Legend</h3>
+    <p><span class="legend-color station"></span> Station</p>
+    <p><span class="legend-color store"></span> Store</p>
+  </div>
 </body>
 </html>
