@@ -92,7 +92,7 @@
     <p><span class="legend-color store"></span> Store</p>
   </div>
 <script>
-let map;
+  let map;
   let storeMarkers = [];
   let stationMarkers = [];
   let stationCircles = [];
@@ -100,6 +100,7 @@ let map;
   let highlightedMarker = null;
   let hoverInfoWindow = new google.maps.InfoWindow();
   let persistentInfoWindow = new google.maps.InfoWindow();
+  let persistentOpenOn = null;
 
   const locations = [
     {"Name": "Richfield 66th #477", "Latitude": 44.8832696, "Longitude": -93.3183539, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
@@ -720,6 +721,8 @@ const colors = {
         storeMarkers.push(marker);
 
         marker.addListener("mouseover", () => {
+          if (persistentOpenOn === marker) return;
+
           const stationsInRange = stationCircles
             .map(circle => {
               const distance = google.maps.geometry.spherical.computeDistanceBetween(
@@ -748,7 +751,9 @@ const colors = {
         });
 
         marker.addListener("mouseout", () => {
-          hoverInfoWindow.close();
+          if (persistentOpenOn !== marker) {
+            hoverInfoWindow.close();
+          }
         });
 
         marker.addListener("click", () => {
@@ -777,6 +782,7 @@ const colors = {
           `;
           persistentInfoWindow.setContent(info);
           persistentInfoWindow.open(map, marker);
+          persistentOpenOn = marker;
         });
 
       } else if (loc.Type === "Station") {
@@ -796,7 +802,7 @@ const colors = {
       }
     });
 
-    // Store search button
+    // Store search
     document.getElementById("storeSearchBtn").addEventListener("click", () => {
       const value = document.getElementById("storeSearchBox").value.trim().toLowerCase();
       if (!value) return;
@@ -833,7 +839,7 @@ const colors = {
       }
     });
 
-    // Station search button
+    // Station search
     document.getElementById("stationSearchBtn").addEventListener("click", () => {
       const value = document.getElementById("stationSearchBox").value.trim().toLowerCase();
       if (!value) return;
@@ -850,7 +856,7 @@ const colors = {
       }
     });
 
-    // Reset button
+    // Reset
     document.getElementById("resetBtn").addEventListener("click", () => {
       document.getElementById("storeSearchBox").value = "";
       document.getElementById("stationSearchBox").value = "";
@@ -861,6 +867,9 @@ const colors = {
         resetMarkerIcon(highlightedMarker);
         highlightedMarker = null;
       }
+
+      persistentInfoWindow.close();
+      persistentOpenOn = null;
     });
   }
 
@@ -877,5 +886,3 @@ const colors = {
 
   window.onload = initMap;
 </script>
-</body>
-</html>
