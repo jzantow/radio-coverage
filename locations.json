@@ -1,18 +1,386 @@
 [
   {
-    "Name": "KAUS-FM",
-    "Latitude": 43.628293,
-    "Longitude": -93.153534,
-    "Radius": 100,
+    "Name": "KALF 95.7FM",
+    "Latitude": 39.9171,
+    "Longitude": -122.6706,
+    "Radius": 60,
     "Type": "Station",
-    "Info": "Extra info here"
+    "Info": "<b>Genre:</b> New Country<br><b>Station Rank:</b>  9t<br><b>Live:</b> MAR17-DEC05<br>"
   },
   {
-    "Name": "Austin #467",
-    "Latitude": 43.685315,
-    "Longitude": -92.98044283,
-    "Radius": 5,
-    "Type": "Store",
-    "Info": "Other info here"
+    "Name": "KBQB 92.7FM",
+    "Latitude": 39.7281,
+    "Longitude": -121.8372,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Adult Hits<br><b>Station Rank:</b>  6t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KCEZ 102.1FM",
+    "Latitude": 40.0242,
+    "Longitude": -122.1,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Pop Contemporary Hit<br><b>Station Rank:</b>  4t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KRQR 106.7FM",
+    "Latitude": 39.7472,
+    "Longitude": -122.19,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Active Rock<br><b>Station Rank:</b>  1t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KTHU 100.7FM",
+    "Latitude": 39.9275,
+    "Longitude": -122.1797,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Classic Rock<br><b>Station Rank:</b>  4t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KDUK 104.7FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Pop CHR<br><b>Station Rank:</b>  #4t<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KEHK 102.3FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Hot AC<br><b>Station Rank:</b>  #9t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KEUG 105.5FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Adult Hits<br><b>Station Rank:</b>  #3<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KKNU 93.3FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #1<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KMGE 94.5FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> AC<br><b>Station Rank:</b>  #4t<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KNRQ 103.7FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Alt<br><b>Station Rank:</b>  #8<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KZEL 96.1FM",
+    "Latitude": 44.0521,
+    "Longitude": -123.0868,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Rock<br><b>Station Rank:</b>  #2<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KBFF 95.5FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Pop CHR<br><b>Station Rank:</b>  #10t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KFBW 105.9FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Rock<br><b>Station Rank:</b>  #8<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KGON 92.3FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Rock<br><b>Station Rank:</b>  #7<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KINK 101.9FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Album Ad Alternative<br><b>Station Rank:</b>  #3<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KKCW 103.3FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> AC<br><b>Station Rank:</b>  #1t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KKRZ 100.3FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Pop CHR<br><b>Station Rank:</b>  #9<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KLTH 106.7FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Hits<br><b>Station Rank:</b>  #1t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KNRK 94.7FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Alternative<br><b>Station Rank:</b>  #13t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KUPL 98.7FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #16<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KWJJ 99.5FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #12<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KXJM 107.5FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Rhythmic CHR<br><b>Station Rank:</b>  #13t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KXL  101.1FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> News Talk<br><b>Station Rank:</b>  #6<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KYCH 97.1FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> AC<br><b>Station Rank:</b>  #4<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KESR 107.1FM",
+    "Latitude": 40.5865,
+    "Longitude": -122.3917,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Adult Hits<br><b>Station Rank:</b>  #3t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KEWB 94.7FM",
+    "Latitude": 40.5865,
+    "Longitude": -122.3917,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Pop Contemporary Hit<br><b>Station Rank:</b>  #5t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KHRD 103.1FM",
+    "Latitude": 40.5865,
+    "Longitude": -122.3917,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Classic Rock<br><b>Station Rank:</b>  #3t<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KNCQ 97.3FM",
+    "Latitude": 40.5865,
+    "Longitude": -122.3917,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #1<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KRRX 106.1FM",
+    "Latitude": 40.5865,
+    "Longitude": -122.3917,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Active Rock<br><b>Station Rank:</b>  #2<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KRYP 93.1FM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Mex Regional<br><b>Station Rank:</b>  #1<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KGAL 1580AM",
+    "Latitude": 44.6365,
+    "Longitude": -123.1059,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> News Talk<br><b>Station Rank:</b> <br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KHPE 107.9FM",
+    "Latitude": 44.6365,
+    "Longitude": -123.1059,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cont. Christian<br><b>Station Rank:</b> <br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KLOO 106.3FM",
+    "Latitude": 44.6365,
+    "Longitude": -123.1059,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Rock<br><b>Station Rank:</b>  #2 Linn County #1 Benton County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KRKT 99.9FM",
+    "Latitude": 44.6365,
+    "Longitude": -123.1059,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #1 Linn County #2 Benton County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KLRR 101.7FM",
+    "Latitude": 44.0582,
+    "Longitude": -121.3153,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Adult Alt.<br><b>Station Rank:</b>  #6t Deschutes County<br><b>Live:</b> MAR03-MAR21<br>"
+  },
+  {
+    "Name": "KMTK 99.7FM",
+    "Latitude": 44.0582,
+    "Longitude": -121.3153,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #5t Deschutes County<br><b>Live:</b> MAR03-MAR21<br>"
+  },
+  {
+    "Name": "KRXF 92.9FM",
+    "Latitude": 44.0582,
+    "Longitude": -121.3153,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Modern Rock<br><b>Station Rank:</b>  #2 Deschutes County<br><b>Live:</b> MAR03-DEC05<br>"
+  },
+  {
+    "Name": "KDCQ 92.9FM",
+    "Latitude": 43.3665,
+    "Longitude": -124.2179,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Hits<br><b>Station Rank:</b>  #1 Coos County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KMHS  105.1FM 1420AM",
+    "Latitude": 43.3665,
+    "Longitude": -124.2179,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country HS Sports<br><b>Station Rank:</b> <br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KYTT 98.7FM",
+    "Latitude": 43.3665,
+    "Longitude": -124.2179,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cont. Christian<br><b>Station Rank:</b>  #6 Coos County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KAJO 1270AM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> AC<br><b>Station Rank:</b>  #1 Josephine County<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KLDR 98.3FM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Hot AC<br><b>Station Rank:</b>  #4 Josephine County<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KROG 96.9FM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Rock<br><b>Station Rank:</b>  #2 Josephine County<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KBOY 95.7FM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Cl Rock<br><b>Station Rank:</b>  #3 Jackson County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KCMX 101.9FM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Soft AC<br><b>Station Rank:</b>  #1 Jackson County<br><b>Live:</b> MAR17-DEC05<br>"
+  },
+  {
+    "Name": "KRWQ 100.3FM",
+    "Latitude": 42.439,
+    "Longitude": -123.327,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> Country<br><b>Station Rank:</b>  #4 Jackson County<br><b>Live:</b> MAR17-APR04<br>"
+  },
+  {
+    "Name": "KFXX 1080AM",
+    "Latitude": 45.5231,
+    "Longitude": -122.6765,
+    "Radius": 60,
+    "Type": "Station",
+    "Info": "<b>Genre:</b> All Sports<br><b>Station Rank:</b>  #21t DJ End for Jason Swygard<br><b>Live:</b> MAR17-DEC07<br>"
   }
 ]
