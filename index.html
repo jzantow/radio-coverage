@@ -9,6 +9,7 @@
       margin: 0;
       padding: 0;
     }
+
     #controls {
       position: absolute;
       top: 60px;
@@ -22,6 +23,7 @@
       border-radius: 5px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
     input[type="text"] {
       padding: 6px;
       font-size: 14px;
@@ -29,6 +31,7 @@
       border-radius: 4px;
       width: 250px;
     }
+
     .control-btn {
       padding: 6px 12px;
       font-size: 14px;
@@ -39,6 +42,7 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
+
     #legend {
       background: white;
       padding: 10px;
@@ -51,6 +55,7 @@
       z-index: 5;
       border-radius: 5px;
     }
+
     .legend-color {
       display: inline-block;
       width: 15px;
@@ -59,9 +64,11 @@
       vertical-align: middle;
       border-radius: 3px;
     }
+
     .legend-color.station {
       background: #1E90FF;
     }
+
     .legend-color.store {
       background: #FF6347;
     }
@@ -76,12 +83,15 @@
     <button id="stationSearchBtn" class="control-btn">Search Station</button>
     <button id="resetBtn" class="control-btn">Reset</button>
   </div>
+
   <div id="map"></div>
+
   <div id="legend">
     <h3>Legend</h3>
     <p><span class="legend-color station"></span> Station</p>
     <p><span class="legend-color store"></span> Store</p>
   </div>
+
   <script>
     let map;
     let storeMarkers = [];
@@ -89,32 +99,37 @@
     let stationCircles = [];
     let infoWindows = [];
     let highlightedMarker = null;
-    const locations = [];
+
     const colors = {
       "Station": "#1E90FF",
       "Store": "#FF6347"
     };
-    function initMap() {
+
+    function initMapWithLocations(locations) {
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
         center: { lat: 39.5, lng: -98.35 },
         gestureHandling: "greedy",
         disableDefaultUI: false
       });
+
       const hoverInfoWindow = new google.maps.InfoWindow();
+
       locations.forEach((loc) => {
         const position = { lat: loc.Latitude, lng: loc.Longitude };
         const color = colors[loc.Type] || "#000";
+
         const circle = new google.maps.Circle({
           strokeColor: color,
-          strokeOpacity: 0.6,
-          strokeWeight: 1,
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
           fillColor: color,
-          fillOpacity: loc.Type === "Store" ? 0.25 : 0.15,
+          fillOpacity: 0.25,
           map: loc.Type === "Station" ? map : null,
           center: position,
           radius: loc.Radius * 1609.34
         });
+
         const marker = new google.maps.Marker({
           position,
           map,
@@ -128,8 +143,10 @@
             strokeColor: "#fff"
           }
         });
+
         if (loc.Type === "Store") {
           storeMarkers.push(marker);
+
           marker.addListener("mouseover", () => {
             const stationsInRange = stationCircles
               .map(circle => {
@@ -148,33 +165,47 @@
                 return null;
               })
               .filter(Boolean);
-            const info = `<strong>${loc.Name}</strong><br><b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join("<br>") : "None"}`;
+
+            const info = `
+              <strong>${loc.Name}</strong><br>
+              <b>In Range Of:</b><br>${stationsInRange.length ? stationsInRange.join("<br>") : "None"}
+            `;
             hoverInfoWindow.setContent(info);
             hoverInfoWindow.open(map, marker);
           });
+
           marker.addListener("mouseout", () => {
             hoverInfoWindow.close();
           });
+
         } else if (loc.Type === "Station") {
           stationMarkers.push(marker);
           stationCircles.push(circle);
         }
       });
+
       document.getElementById("storeSearchBtn").addEventListener("click", () => {
         const value = document.getElementById("storeSearchBox").value.trim().toLowerCase();
         if (!value) return;
+
         const match = storeMarkers.find(marker => {
           const title = marker.getTitle().toLowerCase();
           const matchNum = title.match(/#?(\d+)/);
-          return (title.includes(value) || (matchNum && matchNum[1] === value.replace("#", "")));
+          return (
+            title.includes(value) ||
+            (matchNum && matchNum[1] === value.replace("#", ""))
+          );
         });
+
         if (match) {
           map.setCenter(match.getPosition());
           map.setZoom(8);
+
           if (highlightedMarker) {
             resetMarkerIcon(highlightedMarker);
             highlightedMarker = null;
           }
+
           highlightedMarker = match;
           match.setIcon({
             path: google.maps.SymbolPath.CIRCLE,
@@ -188,12 +219,15 @@
           alert("No matching store found.");
         }
       });
+
       document.getElementById("stationSearchBtn").addEventListener("click", () => {
         const value = document.getElementById("stationSearchBox").value.trim().toLowerCase();
         if (!value) return;
+
         const match = stationMarkers.find(marker =>
           marker.getTitle().toLowerCase().includes(value)
         );
+
         if (match) {
           map.setCenter(match.getPosition());
           map.setZoom(8);
@@ -201,17 +235,20 @@
           alert("No matching station found.");
         }
       });
+
       document.getElementById("resetBtn").addEventListener("click", () => {
         document.getElementById("storeSearchBox").value = "";
         document.getElementById("stationSearchBox").value = "";
         map.setZoom(5);
         map.setCenter({ lat: 39.5, lng: -98.35 });
+
         if (highlightedMarker) {
           resetMarkerIcon(highlightedMarker);
           highlightedMarker = null;
         }
       });
     }
+
     function resetMarkerIcon(marker) {
       marker.setIcon({
         path: google.maps.SymbolPath.CIRCLE,
@@ -222,7 +259,12 @@
         strokeColor: "#fff"
       });
     }
-    window.onload = initMap;
+
+    // 🔽 FETCH LOCATIONS FROM GITHUB JSON
+    fetch('https://jzantow.github.io/radio-coverage/locations.json')
+      .then(res => res.json())
+      .then(data => initMapWithLocations(data))
+      .catch(err => console.error('Failed to load locations.json:', err));
   </script>
 </body>
 </html>
