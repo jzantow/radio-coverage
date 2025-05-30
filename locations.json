@@ -390,4 +390,18 @@
     "Radius": 5,
     "Type": "Store",
   }
+  {
+    "Name": "Bend South Tire Center",
+    "Latitude": 44.01846,
+    "Longitude": -121.318034,
+    "Radius": 0,
+    "Type": "Store"
+  },
+  {
+    "Name": "Bend Cooley Road",
+    "Latitude": 44.108728,
+    "Longitude": -121.30116,
+    "Radius": 0,
+    "Type": "Store"
+  }
 ]
