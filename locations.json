@@ -1,0 +1,18 @@
+[
+  {
+    "Name": "KAUS-FM",
+    "Latitude": 43.628293,
+    "Longitude": -93.153534,
+    "Radius": 100,
+    "Type": "Station",
+    "Info": "Extra info here"
+  },
+  {
+    "Name": "Austin #467",
+    "Latitude": 43.685315,
+    "Longitude": -92.98044283,
+    "Radius": 5,
+    "Type": "Store",
+    "Info": "Other info here"
+  }
+]
