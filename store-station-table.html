@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Stores and Stations in Range</title>
@@ -8,86 +8,106 @@
       font-family: Arial, sans-serif;
       padding: 20px;
     }
+    input[type="text"] {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 300px;
+      font-size: 14px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
     }
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
       padding: 8px;
       text-align: left;
       vertical-align: top;
     }
     th {
-      background-color: #f4f4f4;
+      background-color: #f2f2f2;
     }
-    tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-    .station {
-      margin-bottom: 4px;
+    tr.hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<h1>Stores and Stations in Range</h1>
-<table id="resultTable">
-  <thead>
-    <tr>
-      <th>Store</th>
-      <th>Stations in Range</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Populated via JS -->
-  </tbody>
-</table>
+  <h1>Stores and Stations in Range</h1>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
-<script>
-  fetch('locations.json')
-    .then(res => res.json())
-    .then(locations => {
-      const stores = locations.filter(loc => loc.Type === "Store");
-      const stations = locations.filter(loc => loc.Type === "Station");
+  <input type="text" id="searchInput" placeholder="Search for a store...">
 
-      const tbody = document.querySelector("#resultTable tbody");
+  <table id="storeTable">
+    <thead>
+      <tr>
+        <th>Store</th>
+        <th>Stations in Range</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Populated by script -->
+    </tbody>
+  </table>
+
+  <script>
+    async function loadData() {
+      const response = await fetch('locations.json');
+      const locations = await response.json();
+
+      const stores = locations.filter(loc => loc.Type === 'Store');
+      const stations = locations.filter(loc => loc.Type === 'Station');
+
+      const tbody = document.getElementById('tableBody');
 
       stores.forEach(store => {
         const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
-        const inRangeStations = stations.filter(station => {
+
+        const inRange = stations.filter(station => {
           const stationLatLng = new google.maps.LatLng(station.Latitude, station.Longitude);
+          const radiusMeters = station.Radius * 1609.34;
           const distance = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
-          return distance <= station.Radius * 1609.34; // convert miles to meters
+          return distance <= radiusMeters;
         });
 
-        const row = document.createElement("tr");
-        const stationList = inRangeStations.map(station =>
-          `${station.Name} - ${station.Info?.replace(/<[^>]*>?/gm, '').trim() || ''}`
-        ).join("<br>");
+        const row = document.createElement('tr');
+        const storeCell = document.createElement('td');
+        storeCell.textContent = store.Name;
+        const stationCell = document.createElement('td');
+        stationCell.innerHTML = inRange.length
+          ? inRange.map(s => `${s.Name} – ${stripTags(s.Info)}`).join('<br>')
+          : 'None';
 
-        row.innerHTML = `
-          <td>${store.Name}</td>
-          <td>${stationList || 'None'}</td>
-        `;
-
+        row.appendChild(storeCell);
+        row.appendChild(stationCell);
         tbody.appendChild(row);
       });
-    })
-    .catch(err => console.error("Failed to load locations:", err));
+    }
 
-  document.getElementById('searchInput').addEventListener('keyup', function() {
-    const filter = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#storeTable tbody tr');
+    function stripTags(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      return div.textContent || div.innerText || '';
+    }
 
-    rows.forEach(row => {
-      const storeName = row.cells[0].textContent.toLowerCase();
-      row.style.display = storeName.includes(filter) ? '' : 'none';
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const filter = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#storeTable tbody tr');
+      rows.forEach(row => {
+        const storeName = row.cells[0].textContent.toLowerCase();
+        row.style.display = storeName.includes(filter) ? '' : 'none';
+      });
     });
-  });\
-</script>
+
+    function initGoogleMapsLib(callback) {
+      const script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry&callback=' + callback.name;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    initGoogleMapsLib(loadData);
+  </script>
 
 </body>
 </html>
