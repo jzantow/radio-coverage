@@ -77,6 +77,16 @@
       });
     })
     .catch(err => console.error("Failed to load locations:", err));
+
+  document.getElementById('searchInput').addEventListener('keyup', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#storeTable tbody tr');
+
+    rows.forEach(row => {
+      const storeName = row.cells[0].textContent.toLowerCase();
+      row.style.display = storeName.includes(filter) ? '' : 'none';
+    });
+  });\
 </script>
 
 </body>
