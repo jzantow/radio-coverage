@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stores and Stations in Range</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    .station {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Stores and Stations in Range</h1>
+<table id="resultTable">
+  <thead>
+    <tr>
+      <th>Store</th>
+      <th>Stations in Range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Populated via JS -->
+  </tbody>
+</table>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE"></script>
+<script>
+  fetch('locations.json')
+    .then(res => res.json())
+    .then(locations => {
+      const stores = locations.filter(loc => loc.Type === "Store");
+      const stations = locations.filter(loc => loc.Type === "Station");
+
+      const tbody = document.querySelector("#resultTable tbody");
+
+      stores.forEach(store => {
+        const storeLatLng = new google.maps.LatLng(store.Latitude, store.Longitude);
+        const inRangeStations = stations.filter(station => {
+          const stationLatLng = new google.maps.LatLng(station.Latitude, station.Longitude);
+          const distance = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+          return distance <= station.Radius * 1609.34; // convert miles to meters
+        });
+
+        const row = document.createElement("tr");
+        const stationList = inRangeStations.map(station =>
+          `${station.Name} - ${station.Info?.replace(/<[^>]*>?/gm, '').trim() || ''}`
+        ).join("<br>");
+
+        row.innerHTML = `
+          <td>${store.Name}</td>
+          <td>${stationList || 'None'}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => console.error("Failed to load locations:", err));
+</script>
+
+</body>
+</html>
