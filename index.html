@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map (Store Click Only)</title>
+  <title>Radio Coverage Map (Minimal Store Click)</title>
   <meta charset="utf-8" />
   <style>
     html, body, #map {
@@ -9,46 +9,17 @@
       margin: 0;
       padding: 0;
     }
-    #controls {
-      position: absolute;
-      top: 60px;
-      left: 10px;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 8px;
-      border-radius: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    input[type="text"] {
-      padding: 6px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 250px;
-    }
-    .control-btn {
-      padding: 6px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: white;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+    #map { width: 100%; height: 100vh; }
     #legend {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
       background: white;
       padding: 10px;
       font-family: Arial, sans-serif;
       font-size: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 5;
       border-radius: 5px;
     }
     .legend-color {
@@ -59,26 +30,14 @@
       vertical-align: middle;
       border-radius: 3px;
     }
-    .legend-color.station {
-      background: #1E90FF;
-    }
-    .legend-color.store {
-      background: #FF6347;
-    }
+    .legend-color.station { background: #1E90FF; }
+    .legend-color.store   { background: #FF6347; }
   </style>
 
-  <!-- Include geometry library to measure distances -->
+  <!-- We include the geometry library so we can call computeDistanceBetween() -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
-  <div id="controls">
-    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, #97, Burley)" />
-    <button id="storeSearchBtn" class="control-btn">Search Store</button>
-    <input id="stationSearchBox" type="text" placeholder="Search for station (e.g. KDIL)" />
-    <button id="stationSearchBtn" class="control-btn">Search Station</button>
-    <button id="resetBtn" class="control-btn">Reset</button>
-  </div>
-
   <div id="map"></div>
 
   <div id="legend">
@@ -91,12 +50,11 @@
     let map;
     const storeMarkers   = [];
     const stationMarkers = [];
-    const stationCircles = [];
-    const stationData    = [];
+    const stationData    = []; // will hold raw {Name, Latitude, Longitude, Radius, Info} for each station
 
-    const colors = {
+    const COLORS = {
       "Station": "#1E90FF",
-      "Store": "#FF6347"
+      "Store":   "#FF6347"
     };
 
     function initMap() {
@@ -106,33 +64,44 @@
         gestureHandling: "greedy"
       });
 
-      // Single InfoWindow for stores and stations
+      // A single InfoWindow for both stores and stations
       const infoWindow = new google.maps.InfoWindow();
 
+      // 1) Fetch locations.json
       fetch('https://jzantow.github.io/radio-coverage/locations.json')
         .then(res => res.json())
         .then(locations => {
+          // 2) First, build stationData[] and stationMarkers[] (we’ll also draw circles for visualization)
+          locations.forEach(loc => {
+            if (loc.Type === "Station") {
+              stationData.push(loc);
+            }
+          });
+
+          // 3) Now place markers (and circles) for every location
           locations.forEach(loc => {
             const position = { lat: loc.Latitude, lng: loc.Longitude };
-            const color = colors[loc.Type] || "#000";
+            const color = COLORS[loc.Type] || "#000";
 
-            // Create a circle for stations (non-clickable so it doesn't intercept clicks)
-            const circle = new google.maps.Circle({
-              strokeColor: color,
-              strokeOpacity: 0.8,
-              strokeWeight: 2,
-              fillColor: color,
-              fillOpacity: 0.25,
-              map: loc.Type === "Station" ? map : null,
-              center: position,
-              radius: (loc.Radius || 0) * 1609.34,
-              clickable: false
-            });
+            // If it’s a station, draw its coverage circle as a visual aid (non-clickable)
+            if (loc.Type === "Station") {
+              new google.maps.Circle({
+                strokeColor: color,
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.25,
+                center: position,
+                radius: (loc.Radius || 0) * 1609.34,
+                map: map,
+                clickable: false
+              });
+            }
 
-            // Create a marker for both stores and stations
+            // Create a marker for both Store & Station
             const marker = new google.maps.Marker({
-              position,
-              map,
+              position: position,
+              map: map,
               title: loc.Name,
               icon: {
                 path: google.maps.SymbolPath.CIRCLE,
@@ -145,44 +114,40 @@
             });
 
             if (loc.Type === "Store") {
-              // STORE: keep marker & no hiding logic
+              // ─── STORE: attach click listener that loops over stationData[] ───
               storeMarkers.push(marker);
 
-              // When you click a store, list stations in range
               marker.addListener("click", () => {
-                // 1) Determine which stations are in range
-                const inRange = stationCircles
-                  .map((c, idx) => {
-                    const dist = google.maps.geometry.spherical.computeDistanceBetween(
-                      new google.maps.LatLng(loc.Latitude, loc.Longitude),
-                      c.getCenter()
-                    );
-                    if (dist <= c.getRadius()) {
-                      return stationData[idx]?.Name || null;
+                console.log("STORE CLICK →", loc.Name);
+
+                // Compute which stations are in range of this store
+                const inRangeNames = stationData
+                  .map(st => {
+                    const storeLatLng   = new google.maps.LatLng(loc.Latitude, loc.Longitude);
+                    const stationLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
+                    const distanceMeters = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+                    const radiusMeters = (st.Radius || 0) * 1609.34;
+                    if (distanceMeters <= radiusMeters) {
+                      return st.Name;
                     }
                     return null;
                   })
-                  .filter(Boolean);
+                  .filter(name => name); // remove nulls
 
-                // 2) Build HTML content
+                // Build simple HTML for InfoWindow
                 const content = `
                   <strong>${loc.Name}</strong><br>
                   <b>Stations In Range:</b><br>
-                  ${inRange.length ? inRange.join("<br>") : "None"}
+                  ${inRangeNames.length ? inRangeNames.join("<br>") : "None"}
                 `;
-
-                // 3) Show InfoWindow on the store marker
                 infoWindow.setContent(content);
                 infoWindow.open(map, marker);
               });
 
             } else if (loc.Type === "Station") {
-              // STATION: store data and add click listener
-              stationData.push(loc);
+              // ─── STATION: attach click listener that just pops up the station name ───
               stationMarkers.push(marker);
-              stationCircles.push(circle);
 
-              // When you click a station, show just its name
               marker.addListener("click", () => {
                 infoWindow.setContent(`<strong>${loc.Name}</strong>`);
                 infoWindow.open(map, marker);
@@ -190,54 +155,10 @@
             }
           });
         })
-        .catch(err => console.error("Failed to load locations.json:", err));
-
-      // === STORE SEARCH ===
-      document.getElementById("storeSearchBtn").addEventListener("click", () => {
-        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
-        if (!query) return;
-
-        const match = storeMarkers.find(m => {
-          const title = m.getTitle().toLowerCase();
-          const numMatch = title.match(/#?(\d+)/);
-          return (
-            title.includes(query) ||
-            (numMatch && numMatch[1] === query.replace("#", ""))
-          );
+        .catch(err => {
+          console.error("ERROR loading locations.json:", err);
+          alert("Could not load location data. See console.");
         });
-
-        if (match) {
-          map.setCenter(match.getPosition());
-          map.setZoom(8);
-        } else {
-          alert("No matching store found.");
-        }
-      });
-
-      // === STATION SEARCH ===
-      document.getElementById("stationSearchBtn").addEventListener("click", () => {
-        const query = document.getElementById("stationSearchBox").value.trim().toLowerCase();
-        if (!query) return;
-
-        const match = stationMarkers.find(m =>
-          m.getTitle().toLowerCase().includes(query)
-        );
-
-        if (match) {
-          map.setCenter(match.getPosition());
-          map.setZoom(8);
-        } else {
-          alert("No matching station found.");
-        }
-      });
-
-      // === RESET ===
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        document.getElementById("storeSearchBox").value = "";
-        document.getElementById("stationSearchBox").value = "";
-        map.setZoom(5);
-        map.setCenter({ lat: 39.5, lng: -98.35 });
-      });
     }
 
     window.onload = initMap;
