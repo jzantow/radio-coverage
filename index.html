@@ -94,12 +94,12 @@
       "Store":   "#FF6347"
     };
 
-map = new google.maps.Map(document.getElementById("map"), {
-  zoom: 5,
-  center: { lat: 42.53, lng: -114.36 },
-  gestureHandling: "greedy",
-  mapTypeControl: false
-});
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: { lat: 42.53, lng: -114.36 },
+        gestureHandling: "greedy"
+      });
 
       const infoWindow = new google.maps.InfoWindow();
 
