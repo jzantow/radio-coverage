@@ -95,7 +95,7 @@
       "Store":   "#FF6347"
     };
 
-    // Create a gold “highlight” icon
+    // Build a small gold circle icon for highlighting
     function makeHighlightIcon() {
       return {
         path: google.maps.SymbolPath.CIRCLE,
@@ -111,19 +111,11 @@
       map = new google.maps.Map(document.getElementById("map"), {
         zoom: 5,
         center: { lat: 42.53, lng: -114.36 },
-        gestureHandling: "greedy"
+        gestureHandling: "greedy",
+        mapTypeControl: false  // hide Map/Satellite toggle
       });
 
       const infoWindow = new google.maps.InfoWindow();
-
-      // If user clicks anywhere on the map (not on a marker), clear highlight
-      map.addListener("click", () => {
-        if (highlightedMarker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
-          highlightedMarker = null;
-        }
-        infoWindow.close();
-      });
 
       fetch('https://jzantow.github.io/radio-coverage/locations.json')
         .then(res => res.json())
@@ -140,7 +132,7 @@
             const position = { lat: loc.Latitude, lng: loc.Longitude };
             const color = COLORS[loc.Type] || "#000";
 
-            // Draw station circle as visual aid (non-clickable)
+            // If it’s a station, draw its coverage circle (non-clickable)
             if (loc.Type === "Station") {
               new google.maps.Circle({
                 strokeColor: color,
@@ -155,7 +147,7 @@
               });
             }
 
-            // Default icon for this marker (based on type color)
+            // Default colored icon based on type
             const defaultIcon = {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 7,
@@ -165,7 +157,7 @@
               strokeColor: "#fff"
             };
 
-            // Create marker for both stores and stations
+            // Create marker
             const marker = new google.maps.Marker({
               position: position,
               map: map,
@@ -173,23 +165,22 @@
               icon: defaultIcon
             });
 
-            // Attach the defaultIcon to the marker so we can revert later
+            // Store the default icon for reverting later
             marker.defaultIcon = defaultIcon;
 
             if (loc.Type === "Store") {
-              // ─── STORE: click pops up In‐Range list & highlight ───
               storeMarkers.push(marker);
 
-              marker.addListener("click", (e) => {
-                e.stopPropagation(); // Prevent map-click handler from immediately clearing
-                // 1) Highlight this store marker
+              // ─── STORE: click pops InfoWindow & highlight ───
+              marker.addListener("click", () => {
+                // Highlight this store marker
                 if (highlightedMarker && highlightedMarker !== marker) {
                   highlightedMarker.setIcon(highlightedMarker.defaultIcon);
                 }
                 marker.setIcon(makeHighlightIcon());
                 highlightedMarker = marker;
 
-                // 2) Compute which stations are within this store’s radius
+                // Compute which stations are in range
                 const inRangeNames = stationData
                   .map(st => {
                     const storeLatLng   = new google.maps.LatLng(loc.Latitude, loc.Longitude);
@@ -200,7 +191,7 @@
                   })
                   .filter(name => name);
 
-                // 3) Show InfoWindow on the store marker
+                // Show InfoWindow on the store marker
                 const content = `
                   <strong>${loc.Name}</strong><br>
                   <b>Stations In Range:</b><br>
@@ -211,11 +202,10 @@
               });
 
             } else if (loc.Type === "Station") {
-              // ─── STATION: click pops up its name & highlight ───
               stationMarkers.push(marker);
 
-              marker.addListener("click", (e) => {
-                e.stopPropagation();
+              // ─── STATION: click pops InfoWindow & highlight ───
+              marker.addListener("click", () => {
                 // Highlight this station marker
                 if (highlightedMarker && highlightedMarker !== marker) {
                   highlightedMarker.setIcon(highlightedMarker.defaultIcon);
@@ -233,8 +223,7 @@
         .catch(err => console.error("Failed to load locations.json:", err));
 
       // === STORE SEARCH ===
-      document.getElementById("storeSearchBtn").addEventListener("click", (e) => {
-        e.stopPropagation();
+      document.getElementById("storeSearchBtn").addEventListener("click", () => {
         const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
         if (!query) return;
 
@@ -259,7 +248,7 @@
           match.setIcon(makeHighlightIcon());
           highlightedMarker = match;
 
-          // Also open the InfoWindow exactly as if clicked:
+          // Open its InfoWindow
           google.maps.event.trigger(match, "click");
         } else {
           alert("No matching store found.");
@@ -267,8 +256,7 @@
       });
 
       // === STATION SEARCH ===
-      document.getElementById("stationSearchBtn").addEventListener("click", (e) => {
-        e.stopPropagation();
+      document.getElementById("stationSearchBtn").addEventListener("click", () => {
         const query = document.getElementById("stationSearchBox").value.trim().toLowerCase();
         if (!query) return;
 
@@ -288,7 +276,7 @@
           match.setIcon(makeHighlightIcon());
           highlightedMarker = match;
 
-          // Also open the InfoWindow exactly as if clicked:
+          // Open its InfoWindow
           google.maps.event.trigger(match, "click");
         } else {
           alert("No matching station found.");
@@ -296,8 +284,7 @@
       });
 
       // === RESET ===
-      document.getElementById("resetBtn").addEventListener("click", (e) => {
-        e.stopPropagation();
+      document.getElementById("resetBtn").addEventListener("click", () => {
         document.getElementById("storeSearchBox").value   = "";
         document.getElementById("stationSearchBox").value = "";
         map.setZoom(5);
