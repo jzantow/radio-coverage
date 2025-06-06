@@ -90,14 +90,16 @@
       return div.textContent || div.innerText || '';
     }
 
-    document.getElementById('searchInput').addEventListener('input', function () {
-      const filter = this.value.toLowerCase();
-      const rows = document.querySelectorAll('#storeTable tbody tr');
-      rows.forEach(row => {
-        const storeName = row.cells[0].textContent.toLowerCase();
-        row.style.display = storeName.includes(filter) ? '' : 'none';
-      });
-    });
+document.getElementById('searchInput').addEventListener('input', function () {
+  const filter = this.value.toLowerCase();
+  const rows = document.querySelectorAll('#storeTable tbody tr');
+  rows.forEach(row => {
+    const storeCell = row.cells[0].textContent.toLowerCase();
+    const stationCell = row.cells[1].textContent.toLowerCase();
+    const combinedText = storeCell + ' ' + stationCell;
+    row.style.display = combinedText.includes(filter) ? '' : 'none';
+  });
+});
 
     function initGoogleMapsLib(callback) {
       const script = document.createElement('script');
