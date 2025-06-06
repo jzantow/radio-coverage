@@ -10,17 +10,19 @@
       padding: 0;
     }
   </style>
-  <!-- include geometry library for distance calculations -->
+
+  <!-- Include geometry library so we can measure distances -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
   <div id="map" style="width:100%; height:100vh;"></div>
+
   <script>
     let map;
-    const storeMarkers = [];
+    const storeMarkers   = [];
     const stationMarkers = [];
     const stationCircles = [];
-    const stationData = [];
+    const stationData    = [];
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
@@ -28,29 +30,34 @@
         center: { lat: 39.5, lng: -98.35 },
       });
 
-      const storeInfoWindow = new google.maps.InfoWindow();
+      // Two InfoWindows: one for stores, one for stations
+      const storeInfoWindow   = new google.maps.InfoWindow();
       const stationInfoWindow = new google.maps.InfoWindow();
 
       fetch('https://jzantow.github.io/radio-coverage/locations.json')
         .then(res => res.json())
         .then(locations => {
           locations.forEach((loc, i) => {
-            const position = { lat: loc.Latitude, lng: loc.Longitude };
-            const color = loc.Type === "Station" ? "#1E90FF" : "#FF6347";
+            // 1) DEBUG: print out each location’s Type
+            console.log(`LOADED [${i}]: Name="${loc.Name}", Type="${loc.Type}"`);
 
-            // Create circle only for stations
+            const position = { lat: loc.Latitude, lng: loc.Longitude };
+            const color = (loc.Type === "Station") ? "#1E90FF" : "#FF6347";
+
+            // 2) Create the circle for stations—make it non-clickable so it won't intercept clicks
             const circle = new google.maps.Circle({
               strokeColor: color,
               strokeOpacity: 0.8,
               strokeWeight: 2,
               fillColor: color,
               fillOpacity: 0.25,
-              map: loc.Type === "Station" ? map : null,
+              map: (loc.Type === "Station") ? map : null,
               center: position,
-              radius: (loc.Radius || 0) * 1609.34
+              radius: (loc.Radius || 0) * 1609.34,
+              clickable: false
             });
 
-            // Create marker
+            // 3) Create a marker for both Stores and Stations
             const marker = new google.maps.Marker({
               position,
               map,
@@ -66,29 +73,32 @@
             });
 
             if (loc.Type === "Store") {
+              // ─── STORE ───
               storeMarkers.push(marker);
 
-              // STORE HOVER (unchanged)
+              // STORE: hover → show “In Range Of”
               marker.addListener("mouseover", () => {
                 console.log("STORE HOVER →", loc.Name);
-                // …existing hover code…
-                const stationsInRange = stationCircles.map((c, idx) => {
-                  const dist = google.maps.geometry.spherical.computeDistanceBetween(
-                    new google.maps.LatLng(loc.Latitude, loc.Longitude),
-                    c.getCenter()
-                  );
-                  if (dist <= c.getRadius()) {
-                    return stationData[idx]?.Name || null;
-                  }
-                  return null;
-                }).filter(Boolean);
 
-                const html = `
+                const stationsInRange = stationCircles
+                  .map((c, idx) => {
+                    const d = google.maps.geometry.spherical.computeDistanceBetween(
+                      new google.maps.LatLng(loc.Latitude, loc.Longitude),
+                      c.getCenter()
+                    );
+                    if (d <= c.getRadius()) {
+                      return stationData[idx]?.Name || null;
+                    }
+                    return null;
+                  })
+                  .filter(Boolean);
+
+                const hoverHTML = `
                   <strong>${loc.Name}</strong><br>
                   <b>In Range Of:</b><br>
                   ${stationsInRange.length ? stationsInRange.join("<br>") : "None"}
                 `;
-                storeInfoWindow.setContent(html);
+                storeInfoWindow.setContent(hoverHTML);
                 storeInfoWindow.open(map, marker);
               });
 
@@ -96,22 +106,23 @@
                 storeInfoWindow.close();
               });
 
-              // ─── STORE CLICK ───
+              // STORE: click → filter bubbles & show InfoWindow
               marker.addListener("click", () => {
                 console.log("STORE CLICK →", loc.Name);
-                // 1) Find all stations in range
+
+                // 1) find which stations are in range
                 const inRangeIndices = [];
                 stationCircles.forEach((c, idx) => {
-                  const dist = google.maps.geometry.spherical.computeDistanceBetween(
+                  const d = google.maps.geometry.spherical.computeDistanceBetween(
                     new google.maps.LatLng(loc.Latitude, loc.Longitude),
                     c.getCenter()
                   );
-                  if (dist <= c.getRadius()) {
+                  if (d <= c.getRadius()) {
                     inRangeIndices.push(idx);
                   }
                 });
 
-                // 2) Hide all station markers/circles NOT in range
+                // 2) show only those station markers/circles that are inRange; hide the rest
                 stationMarkers.forEach((m, idx) => {
                   if (inRangeIndices.includes(idx)) {
                     m.setMap(map);
@@ -122,25 +133,27 @@
                   }
                 });
 
-                // 3) Build and show InfoWindow listing stations in range
+                // 3) build InfoWindow content listing stations in range
                 const listedNames = inRangeIndices
                   .map(i => stationData[i]?.Name || "")
                   .filter(name => name);
-                const infoHtml = `
+
+                const infoHTML = `
                   <strong>${loc.Name}</strong><br>
                   <b>Stations In Range:</b><br>
                   ${listedNames.length ? listedNames.join("<br>") : "None"}
                 `;
-                storeInfoWindow.setContent(infoHtml);
+                storeInfoWindow.setContent(infoHTML);
                 storeInfoWindow.open(map, marker);
               });
 
             } else if (loc.Type === "Station") {
+              // ─── STATION ───
               stationData.push(loc);
               stationMarkers.push(marker);
               stationCircles.push(circle);
 
-              // STATION CLICK (unchanged)
+              // STATION: click → just pop up its name
               marker.addListener("click", () => {
                 console.log("STATION CLICK →", loc.Name);
                 stationInfoWindow.setContent(`<strong>${loc.Name}</strong>`);
@@ -151,6 +164,7 @@
         })
         .catch(err => {
           console.error("Failed to load locations.json:", err);
+          alert("Could not load location data. Check console for details.");
         });
     }
 
