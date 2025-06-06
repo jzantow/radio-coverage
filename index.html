@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map (Minimal Store Click)</title>
+  <title>Radio Coverage Map (with Search)</title>
   <meta charset="utf-8" />
   <style>
     html, body, #map {
@@ -9,7 +9,36 @@
       margin: 0;
       padding: 0;
     }
-    #map { width: 100%; height: 100vh; }
+    #controls {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    input[type="text"] {
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 250px;
+    }
+    .control-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
     #legend {
       position: absolute;
       bottom: 10px;
@@ -34,10 +63,18 @@
     .legend-color.store   { background: #FF6347; }
   </style>
 
-  <!-- We include the geometry library so we can call computeDistanceBetween() -->
+  <!-- Include geometry library for distance calculations -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
+  <div id="controls">
+    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, #97, Burley)" />
+    <button id="storeSearchBtn" class="control-btn">Search Store</button>
+    <input id="stationSearchBox" type="text" placeholder="Search for station (e.g. KDIL)" />
+    <button id="stationSearchBtn" class="control-btn">Search Station</button>
+    <button id="resetBtn" class="control-btn">Reset</button>
+  </div>
+
   <div id="map"></div>
 
   <div id="legend">
@@ -50,7 +87,7 @@
     let map;
     const storeMarkers   = [];
     const stationMarkers = [];
-    const stationData    = []; // will hold raw {Name, Latitude, Longitude, Radius, Info} for each station
+    const stationData    = [];
 
     const COLORS = {
       "Station": "#1E90FF",
@@ -64,26 +101,24 @@
         gestureHandling: "greedy"
       });
 
-      // A single InfoWindow for both stores and stations
       const infoWindow = new google.maps.InfoWindow();
 
-      // 1) Fetch locations.json
       fetch('https://jzantow.github.io/radio-coverage/locations.json')
         .then(res => res.json())
         .then(locations => {
-          // 2) First, build stationData[] and stationMarkers[] (we’ll also draw circles for visualization)
+          // First, collect station data so we can compute ranges
           locations.forEach(loc => {
             if (loc.Type === "Station") {
               stationData.push(loc);
             }
           });
 
-          // 3) Now place markers (and circles) for every location
+          // Now place every marker (and draw circles for stations)
           locations.forEach(loc => {
             const position = { lat: loc.Latitude, lng: loc.Longitude };
             const color = COLORS[loc.Type] || "#000";
 
-            // If it’s a station, draw its coverage circle as a visual aid (non-clickable)
+            // Draw station circle as visual aid (non-clickable)
             if (loc.Type === "Station") {
               new google.maps.Circle({
                 strokeColor: color,
@@ -98,7 +133,7 @@
               });
             }
 
-            // Create a marker for both Store & Station
+            // Create marker for both stores and stations
             const marker = new google.maps.Marker({
               position: position,
               map: map,
@@ -114,27 +149,23 @@
             });
 
             if (loc.Type === "Store") {
-              // ─── STORE: attach click listener that loops over stationData[] ───
+              // ─── STORE: click pops up In‐Range list ───
               storeMarkers.push(marker);
 
               marker.addListener("click", () => {
                 console.log("STORE CLICK →", loc.Name);
 
-                // Compute which stations are in range of this store
+                // Compute which stations are within this store’s radius
                 const inRangeNames = stationData
                   .map(st => {
                     const storeLatLng   = new google.maps.LatLng(loc.Latitude, loc.Longitude);
                     const stationLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
-                    const distanceMeters = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
+                    const distMeters = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, stationLatLng);
                     const radiusMeters = (st.Radius || 0) * 1609.34;
-                    if (distanceMeters <= radiusMeters) {
-                      return st.Name;
-                    }
-                    return null;
+                    return distMeters <= radiusMeters ? st.Name : null;
                   })
-                  .filter(name => name); // remove nulls
+                  .filter(name => name);
 
-                // Build simple HTML for InfoWindow
                 const content = `
                   <strong>${loc.Name}</strong><br>
                   <b>Stations In Range:</b><br>
@@ -145,7 +176,7 @@
               });
 
             } else if (loc.Type === "Station") {
-              // ─── STATION: attach click listener that just pops up the station name ───
+              // ─── STATION: click pops up its name ───
               stationMarkers.push(marker);
 
               marker.addListener("click", () => {
@@ -155,10 +186,54 @@
             }
           });
         })
-        .catch(err => {
-          console.error("ERROR loading locations.json:", err);
-          alert("Could not load location data. See console.");
+        .catch(err => console.error("Failed to load locations.json:", err));
+
+      // === STORE SEARCH ===
+      document.getElementById("storeSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = storeMarkers.find(m => {
+          const title = m.getTitle().toLowerCase();
+          const numMatch = title.match(/#?(\d+)/);
+          return (
+            title.includes(query) ||
+            (numMatch && numMatch[1] === query.replace("#", ""))
+          );
         });
+
+        if (match) {
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+        } else {
+          alert("No matching store found.");
+        }
+      });
+
+      // === STATION SEARCH ===
+      document.getElementById("stationSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("stationSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = stationMarkers.find(m =>
+          m.getTitle().toLowerCase().includes(query)
+        );
+
+        if (match) {
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+        } else {
+          alert("No matching station found.");
+        }
+      });
+
+      // === RESET ===
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        document.getElementById("storeSearchBox").value   = "";
+        document.getElementById("stationSearchBox").value = "";
+        map.setZoom(5);
+        map.setCenter({ lat: 39.5, lng: -98.35 });
+      });
     }
 
     window.onload = initMap;
