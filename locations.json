@@ -4232,5 +4232,11 @@
 {"Name": "Madras #13", "Latitude": 44.642952, "Longitude": -121.128662, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1956"},
 {"Name": "Bend #12", "Latitude": 44.052553, "Longitude": -121.302049, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1955"},
 {"Name": "Redmond #9", "Latitude": 44.284346, "Longitude": -121.174777, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1953"},
-{"Name": "Prineville #11", "Latitude": 44.302615, "Longitude": -120.83274, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1952"}
+{"Name": "Prineville #11", "Latitude": 44.302615, "Longitude": -120.83274, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 1952"},
+{"Name": "Grand Rapids #478", "Latitude": 47.20448, "Longitude": -93.526653, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
+{"Name": "Blaine #475", "Latitude": 45.19260095, "Longitude": -93.23561786, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
+{"Name": "Montrose #189", "Latitude": 38.465609, "Longitude": -107.865616, "Radius": 1, "Type": "Store", "Info": "Region: North Central; Date Opened: 2025"},
+{"Name": "White City #272", "Latitude": 42.43578973, "Longitude": -122.8409774, "Radius": 1, "Type": "Store", "Info": "Region: Western; Date Opened: 2025"},
+{"Name": "Yakima West Valley #440", "Latitude": 46.58611, "Longitude": -120.601144, "Radius": 1, "Type": "Store", "Info": "Region: Northwestern; Date Opened: 2025"},
+{"Name": "Vancouver Brush Prairie #442", "Latitude": 45.709337, "Longitude": -122.554329, "Radius": 1, "Type": "Store", "Info": "Region: Northwestern; Date Opened: 2025"}
 ]
