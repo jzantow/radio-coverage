@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map (with Billboard Search)</title>
+  <title>Radio Coverage Map (with Billboard Search Fix)</title>
   <meta charset="utf-8" />
   <style>
     html, body, #map {
@@ -34,9 +34,9 @@
       display: inline-block; width: 15px; height: 15px;
       margin-right: 6px; vertical-align: middle; border-radius: 3px;
     }
-    .legend-color.station  { background: #1E90FF; }
-    .legend-color.store    { background: #FF6347; }
-    .legend-color.billboard{ background: #8A2BE2; }
+    .legend-color.station   { background: #1E90FF; }
+    .legend-color.store     { background: #FF6347; }
+    .legend-color.billboard { background: #8A2BE2; }
   </style>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
@@ -55,9 +55,9 @@
 
   <div id="legend">
     <h3>Legend</h3>
-    <p><span class="legend-color.station"></span> Station</p>
-    <p><span class="legend-color.store"></span> Store</p>
-    <p><span class="legend-color.billboard"></span> Billboard</p>
+    <p><span class="legend-color station"></span> Station</p>
+    <p><span class="legend-color store"></span> Store</p>
+    <p><span class="legend-color billboard"></span> Billboard</p>
   </div>
 
   <script>
@@ -66,7 +66,6 @@
     const stationMarkers   = [];
     const billboardMarkers = [];
     const stationData      = [];
-    const billboardData    = [];
     let highlightedMarker  = null;
 
     const COLORS = {
@@ -99,17 +98,16 @@
       fetch('https://jzantow.github.io/radio-coverage/locations.json')
         .then(res => res.json())
         .then(locations => {
-          // collect station & billboard data
+          // collect station & billboard data arrays
           locations.forEach(loc => {
-            if (loc.Type === "Station")   stationData.push(loc);
-            if (loc.Type === "Billboard") billboardData.push(loc);
+            if (loc.Type === "Station") stationData.push(loc);
           });
 
           locations.forEach(loc => {
             const pos   = { lat: loc.Latitude, lng: loc.Longitude };
             const color = COLORS[loc.Type] || "#000";
 
-            // draw coverage circle only for stations
+            // station coverage circle
             if (loc.Type === "Station") {
               new google.maps.Circle({
                 strokeColor: color, strokeOpacity:0.8, strokeWeight:2,
@@ -182,10 +180,10 @@
           });
         });
 
-      // helper: toggle or clear highlight then run showFn
+      // toggle on second click helper
       function toggleHighlight(marker, showFn) {
         if (highlightedMarker === marker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          marker.setIcon(marker.defaultIcon);
           highlightedMarker = null;
           infoWindow.close();
           return;
