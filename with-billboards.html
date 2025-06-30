@@ -214,7 +214,16 @@
                 highlightedMarker = marker;
 
                 // Show billboard name
-                infoWindow.setContent(`<strong>${loc.Name}</strong>`);
+                const content = `
+  <strong>ON #${loc.Name}</strong><br>
+  <b>Board Type:</b> ${loc["Board Type"] || "N/A"}<br>
+  <b>Location:</b> ${loc.Info || "N/A"}<br>
+  <b>Live Dates:</b><br>${(loc["Live Dates"] || "N/A").replace(/\n/g, "<br>")}<br>
+  <b>Buy Info:</b> ${loc["Buy Info"] || "N/A"}<br>
+  <b>Creative:</b> ${loc.Creative ? `<a href="${loc.Creative}" target="_blank">View</a>` : "N/A"}<br>
+  ${loc["POP Photo"] ? `<b>POP Photo:</b> <a href="${loc["POP Photo"]}" target="_blank">View</a>` : ""}
+`;
+infoWindow.setContent(content);
                 infoWindow.open(map, marker);
               });
             }
