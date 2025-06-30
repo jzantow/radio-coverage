@@ -1,80 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map (with Billboard Search)</title>
+  <title>Radio Coverage Map (V0 with Boards)</title>
   <meta charset="utf-8" />
   <style>
     html, body, #map {
-      height: 100%; margin: 0; padding: 0;
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
     #controls {
-      position: absolute; top: 60px; left: 10px; z-index: 5;
-      display: flex; flex-direction: column; gap: 5px;
-      background: rgba(255,255,255,0.9); padding: 8px;
-      border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     input[type="text"] {
-      padding: 6px; font-size: 14px;
-      border: 1px solid #ccc; border-radius: 4px;
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       width: 250px;
     }
     .control-btn {
-      padding: 6px 12px; font-size: 14px;
-      border: 1px solid #ccc; border-radius: 4px;
-      background: white; cursor: pointer; user-select: none;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
     #legend {
-      position: absolute; bottom: 10px; right: 10px; z-index: 5;
-      background: white; padding: 10px; font-family: Arial;
-      font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
+      background: white;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       border-radius: 5px;
     }
     .legend-color {
-      display: inline-block; width: 15px; height: 15px;
-      margin-right: 6px; vertical-align: middle; border-radius: 3px;
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 3px;
     }
-    .legend-color.station  { background: #1E90FF; }
-    .legend-color.store    { background: #FF6347; }
-    .legend-color.billboard{ background: #8A2BE2; }
+    .legend-color.billboard { background: #1E90FF; }
+    .legend-color.store   { background: #FF6347; }
   </style>
+
+  <!-- Include geometry library for distance calculations -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
   <div id="controls">
-    <input  id="storeSearchBox"     type="text" placeholder="Search store (e.g. #97, Burley)" />
-    <button id="storeSearchBtn"     class="control-btn">Search Store</button>
-    <input  id="stationSearchBox"   type="text" placeholder="Search station (e.g. KDIL)" />
-    <button id="stationSearchBtn"   class="control-btn">Search Station</button>
-    <input  id="billboardSearchBox" type="text" placeholder="Search billboard (ON #)" />
-    <button id="billboardSearchBtn" class="control-btn">Search Billboard</button>
-    <button id="resetBtn"           class="control-btn">Reset</button>
+    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, #97, Burley)" />
+    <button id="storeSearchBtn" class="control-btn">Search Store</button>
+    <input id="billboardSearchBox" type="text" placeholder="Search for billboard by ON # (e.g. 12345)" />
+    <button id="billboardSearchBtn" class="control-btn">Search Billboards</button>
+    <button id="resetBtn" class="control-btn">Reset</button>
   </div>
 
   <div id="map"></div>
 
   <div id="legend">
     <h3>Legend</h3>
-    <p><span class="legend-color.station"></span> Station</p>
-    <p><span class="legend-color.store"></span> Store</p>
-    <p><span class="legend-color.billboard"></span> Billboard</p>
+    <p><span class="legend-color billboard"></span> Billboard</p>
+    <p><span class="legend-color store"></span> Store</p>
   </div>
 
   <script>
     let map;
-    const storeMarkers     = [];
-    const stationMarkers   = [];
+    const storeMarkers   = [];
     const billboardMarkers = [];
-    const stationData      = [];
     const billboardData    = [];
-    let highlightedMarker  = null;
+    let highlightedMarker = null;
 
     const COLORS = {
-      "Station":   "#1E90FF",
-      "Store":     "#FF6347",
-      "Billboard": "#8A2BE2"
+      "Billboard": "#1E90FF",
+      "Store":   "#FF6347"
     };
 
+    // Build a small gold circle icon for highlighting
     function makeHighlightIcon() {
       return {
         path: google.maps.SymbolPath.CIRCLE,
@@ -91,154 +112,185 @@
         zoom: 5,
         center: { lat: 42.53, lng: -114.36 },
         gestureHandling: "greedy",
-        mapTypeControl: false
+        mapTypeControl: false  // hide Map/Satellite toggle
       });
 
       const infoWindow = new google.maps.InfoWindow();
 
-      fetch('https://jzantow.github.io/radio-coverage/locations.json')
+      fetch('https://jzantow.github.io/radio-coverage/billboard_locations.json')
         .then(res => res.json())
         .then(locations => {
-          // collect station & billboard data
+          // First, collect billboard data so we can compute ranges
           locations.forEach(loc => {
-            if (loc.Type === "Station")   stationData.push(loc);
-            if (loc.Type === "Billboard") billboardData.push(loc);
+            if (loc.Type === "Billboard") {
+              billboardData.push(loc);
+            }
           });
 
+          // Now place every marker (and draw circles for billboards)
           locations.forEach(loc => {
-            const pos   = { lat: loc.Latitude, lng: loc.Longitude };
+            const position = { lat: loc.Latitude, lng: loc.Longitude };
             const color = COLORS[loc.Type] || "#000";
 
-            // draw coverage circle only for stations
-            if (loc.Type === "Station") {
+            // If it’s a billboard, draw its coverage circle (non-clickable)
+            if (loc.Type === "Billboard") {
               new google.maps.Circle({
-                strokeColor: color, strokeOpacity:0.8, strokeWeight:2,
-                fillColor: color,  fillOpacity:0.25,
-                center: pos, radius:(loc.Radius||0)*1609.34,
-                map, clickable:false
+                strokeColor: color,
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.25,
+                center: position,
+                radius: (loc.Radius || 0) * 1609.34,
+                map: map,
+                clickable: false
               });
             }
 
+            // Default colored icon based on type
             const defaultIcon = {
               path: google.maps.SymbolPath.CIRCLE,
-              scale:7, fillColor:color, fillOpacity:1,
-              strokeWeight:1, strokeColor:"#fff"
+              scale: 7,
+              fillColor: color,
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: "#fff"
             };
 
+            // Create marker
             const marker = new google.maps.Marker({
-              position: pos,
-              map,
+              position: position,
+              map: map,
               title: loc.Name,
               icon: defaultIcon
             });
+
+            // Store the default icon for reverting later
             marker.defaultIcon = defaultIcon;
 
-            // STORE
             if (loc.Type === "Store") {
               storeMarkers.push(marker);
+
+              // ─── STORE: click pops InfoWindow & highlight ───
               marker.addListener("click", () => {
-                toggleHighlight(marker, () => {
-                  const inRange = stationData
-                    .map(st => {
-                      const d = google.maps.geometry.spherical.computeDistanceBetween(
-                        new google.maps.LatLng(loc.Latitude, loc.Longitude),
-                        new google.maps.LatLng(st.Latitude, st.Longitude)
-                      );
-                      return d <= (st.Radius||0)*1609.34 ? st.Name : null;
-                    })
-                    .filter(n=>n);
-                  infoWindow.setContent(`
-                    <strong>${loc.Name}</strong><br>
-                    <b>Stations In Range:</b><br>
-                    ${inRange.length? inRange.join("<br>") : "None"}
-                  `);
-                  infoWindow.open(map, marker);
-                });
+                // Highlight this store marker
+                if (highlightedMarker && highlightedMarker !== marker) {
+                  highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+                }
+                marker.setIcon(makeHighlightIcon());
+                highlightedMarker = marker;
+
+                // Compute which billboards are in range
+                const inRangeNames = billboardData
+                  .map(st => {
+                    const storeLatLng   = new google.maps.LatLng(loc.Latitude, loc.Longitude);
+                    const billboardLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
+                    const distMeters = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, billboardLatLng);
+                    const radiusMeters = (st.Radius || 0) * 1609.34;
+                    return distMeters <= radiusMeters ? st.Name : null;
+                  })
+                  .filter(name => name);
+
+                // Show InfoWindow on the store marker
+                const content = `
+                  <strong>${loc.Name}</strong><br>
+                  <b>Nearby Billboards:</b><br>
+                  ${inRangeNames.length ? inRangeNames.join("<br>") : "None"}
+                `;
+                infoWindow.setContent(content);
+                infoWindow.open(map, marker);
               });
 
-            // STATION
-            } else if (loc.Type === "Station") {
-              stationMarkers.push(marker);
-              marker.addListener("click", () => {
-                toggleHighlight(marker, () => {
-                  infoWindow.setContent(`<strong>${loc.Name}</strong>`);
-                  infoWindow.open(map, marker);
-                });
-              });
-
-            // BILLBOARD
             } else if (loc.Type === "Billboard") {
               billboardMarkers.push(marker);
+
+              // ─── BILLBOARD: click pops InfoWindow & highlight ───
               marker.addListener("click", () => {
-                toggleHighlight(marker, () => {
-                  infoWindow.setContent(`
-                    <strong>${loc.Name}</strong><br>
-                    ${loc.Info||""}
-                  `);
-                  infoWindow.open(map, marker);
-                });
+                // Highlight this billboard marker
+                if (highlightedMarker && highlightedMarker !== marker) {
+                  highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+                }
+                marker.setIcon(makeHighlightIcon());
+                highlightedMarker = marker;
+
+                // Show billboard name
+                infoWindow.setContent(`<strong>${loc.Name}</strong>`);
+                infoWindow.open(map, marker);
               });
             }
           });
-        });
+        })
+        .catch(err => console.error("Failed to load locations.json:", err));
 
-      // helper: toggle or clear highlight then run showFn
-      function toggleHighlight(marker, showFn) {
-        if (highlightedMarker === marker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
-          highlightedMarker = null;
-          infoWindow.close();
-          return;
-        }
-        if (highlightedMarker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
-        }
-        marker.setIcon(makeHighlightIcon());
-        highlightedMarker = marker;
-        showFn();
-      }
-
-      // SEARCH STORE
+      // === STORE SEARCH ===
       document.getElementById("storeSearchBtn").addEventListener("click", () => {
-        const q = document.getElementById("storeSearchBox").value.trim().toLowerCase();
-        const match = storeMarkers.find(m=>{
-          const t = m.getTitle().toLowerCase();
-          const num = t.match(/#?(\d+)/);
-          return t.includes(q) || (num && num[1]===q.replace("#",""));
+        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = storeMarkers.find(m => {
+          const title = m.getTitle().toLowerCase();
+          const numMatch = title.match(/#?(\d+)/);
+          return (
+            title.includes(query) ||
+            (numMatch && numMatch[1] === query.replace("#", ""))
+          );
         });
-        if (!match) return alert("No matching store found.");
-        map.setCenter(match.getPosition());
-        map.setZoom(8);
-        google.maps.event.trigger(match, "click");
+
+        if (match) {
+          // Center & zoom
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+
+          // Highlight the matched marker
+          if (highlightedMarker && highlightedMarker !== match) {
+            highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          }
+          match.setIcon(makeHighlightIcon());
+          highlightedMarker = match;
+
+          // Open its InfoWindow
+          google.maps.event.trigger(match, "click");
+        } else {
+          alert("No matching store found.");
+        }
       });
 
-      // SEARCH STATION
-      document.getElementById("stationSearchBtn").addEventListener("click", () => {
-        const q = document.getElementById("stationSearchBox").value.trim().toLowerCase();
-        const match = stationMarkers.find(m=>m.getTitle().toLowerCase().includes(q));
-        if (!match) return alert("No matching station found.");
-        map.setCenter(match.getPosition());
-        map.setZoom(8);
-        google.maps.event.trigger(match, "click");
-      });
-
-      // SEARCH BILLBOARD by ON #
+      // === BILLBOARD SEARCH ===
       document.getElementById("billboardSearchBtn").addEventListener("click", () => {
-        const q = document.getElementById("billboardSearchBox").value.trim().toLowerCase();
-        const match = billboardMarkers.find(m=>m.getTitle().toLowerCase().includes(q));
-        if (!match) return alert("No matching billboard found.");
-        map.setCenter(match.getPosition());
-        map.setZoom(8);
-        google.maps.event.trigger(match, "click");
+        const query = document.getElementById("billboardSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = billboardMarkers.find(m =>
+          m.getTitle().toLowerCase().includes(query)
+        );
+
+        if (match) {
+          // Center & zoom
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+
+          // Highlight the matched marker
+          if (highlightedMarker && highlightedMarker !== match) {
+            highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          }
+          match.setIcon(makeHighlightIcon());
+          highlightedMarker = match;
+
+          // Open its InfoWindow
+          google.maps.event.trigger(match, "click");
+        } else {
+          alert("No matching billboard found.");
+        }
       });
 
-      // RESET
+      // === RESET ===
       document.getElementById("resetBtn").addEventListener("click", () => {
-        document.getElementById("storeSearchBox").value = "";
-        document.getElementById("stationSearchBox").value = "";
+        document.getElementById("storeSearchBox").value   = "";
         document.getElementById("billboardSearchBox").value = "";
-        map.setCenter({ lat: 42.53, lng: -114.36 });
         map.setZoom(5);
+        map.setCenter({ lat: 42.53, lng: -114.36 });
+
+        // Clear any highlighted marker
         if (highlightedMarker) {
           highlightedMarker.setIcon(highlightedMarker.defaultIcon);
           highlightedMarker = null;
