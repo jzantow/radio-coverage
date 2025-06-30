@@ -114,8 +114,10 @@
         gestureHandling: "greedy",
         mapTypeControl: false  // hide Map/Satellite toggle
       });
+map.setOptions({ scaleControl: true });
 
-      const infoWindow = new google.maps.InfoWindow();
+      
+const infoWindow = new google.maps.InfoWindow();
 
       fetch('https://jzantow.github.io/radio-coverage/billboards.json')
         .then(res => res.json())
