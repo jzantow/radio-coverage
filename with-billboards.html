@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Radio Coverage Map (V0 with Boards)</title>
+  <title>Radio Coverage Map (V0)</title>
   <meta charset="utf-8" />
   <style>
     html, body, #map {
@@ -117,7 +117,7 @@
 
       const infoWindow = new google.maps.InfoWindow();
 
-      fetch('https://jzantow.github.io/radio-coverage/billboard_locations.json')
+      fetch('https://jzantow.github.io/radio-coverage/billboards.json')
         .then(res => res.json())
         .then(locations => {
           // First, collect billboard data so we can compute ranges
