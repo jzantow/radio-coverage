@@ -216,12 +216,14 @@ const infoWindow = new google.maps.InfoWindow();
                 highlightedMarker = marker;
 
                 // Show billboard name
-                const content = `
+const content = `
   <strong>ON #${loc.Name}</strong><br>
   <b>Board Type:</b> ${loc["Board Type"] || "N/A"}<br>
   <b>Location:</b> ${loc.Info || "N/A"}<br>
   <b>Live Dates:</b><br>${(loc["Live Dates"] || "N/A").replace(/\n/g, "<br>")}<br>
-  <b>Buy Info:</b> ${loc["Buy Info"] || "N/A"}<br>
+  <b>Buyer:</b> ${loc["Buyer"] || "N/A"}<br>
+  <b>Associated Store(s):</b> ${loc["Associated Store(s)"] || "N/A"}<br>
+  <b>Directional:</b> ${loc["Directional"] || "N/A"}<br>
   <b>Creative:</b> ${loc.Creative ? `<a href="${loc.Creative}" target="_blank">View</a>` : "N/A"}<br>
   ${loc["POP Photo"] ? `<b>POP Photo:</b> <a href="${loc["POP Photo"]}" target="_blank">View</a>` : ""}
 `;
