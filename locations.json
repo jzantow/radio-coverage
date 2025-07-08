@@ -651,7 +651,7 @@
   {
     "Name": "KEGK 106.9FM",
     "Latitude": 46.546,
-    "Longitude": "–96.6280",
+    "Longitude": "–96.6280,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #5 • <br><b>Buy Region:</b> REG 5<br>",
@@ -739,7 +739,7 @@
   {
     "Name": "KEYZ 660AM",
     "Latitude": 48.2389,
-    "Longitude": "–103.6503",
+    "Longitude": –103.6503,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> News/Talk • <br><b>Station Rank:</b>  #3 Williams County • <br><b>Buy Region:</b> REG 5<br>",
@@ -783,7 +783,7 @@
   {
     "Name": "KFGO 790AM",
     "Latitude": 46.7181,
-    "Longitude": "–96.8017",
+    "Longitude": –96.8017,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> News Talk Info • <br><b>Station Rank:</b>  #2T • <br><b>Buy Region:</b> REG 5<br>",
@@ -805,7 +805,7 @@
   {
     "Name": "KFNL 104.3FM",
     "Latitude": 43.6397,
-    "Longitude": "–92.6417",
+    "Longitude": –92.6417,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #4 Mower County • <br><b>Buy Region:</b> REG 5<br>",
@@ -904,7 +904,7 @@
   {
     "Name": "KGFX 1060AM",
     "Latitude": 44.285,
-    "Longitude": "–100.3469",
+    "Longitude": –100.3469,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Country • <br><b>Station Rank:</b>  #1 Hughes County • <br><b>Buy Region:</b> REG 5<br>",
@@ -926,7 +926,7 @@
   {
     "Name": "KGLB 1310AM",
     "Latitude": 44.777,
-    "Longitude": "–94.1270",
+    "Longitude": –94.1270,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 McLeod County • <br><b>Buy Region:</b> REG 5<br>",
@@ -1806,7 +1806,7 @@
   {
     "Name": "KMIT 105.9FM",
     "Latitude": 43.7378,
-    "Longitude": "‑98.2444",
+    "Longitude": ‑98.2444,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 Davison County • <br><b>Buy Region:</b> REG 5<br>",
@@ -1905,7 +1905,7 @@
   {
     "Name": "KNBZ 97.7FM",
     "Latitude": 45.2083,
-    "Longitude": "‑98.6725",
+    "Longitude": ‑98.6725,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Contemporary • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -1960,7 +1960,7 @@
   {
     "Name": "KNPQ 107.3FM",
     "Latitude": 41.154,
-    "Longitude": "‑100.7733",
+    "Longitude": ‑100.7733,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Country • <br><b>Station Rank:</b>  #3T Lincoln County • <br><b>Buy Region:</b> REG 5<br>",
@@ -2026,7 +2026,7 @@
   {
     "Name": "KODY 1240AM",
     "Latitude": 41.83333,
-    "Longitude": "–100.63333",
+    "Longitude": –100.63333,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> All Talk • <br><b>Station Rank:</b>  #1 Lincoln County • <br><b>Buy Region:</b> REG 5<br>",
@@ -2081,7 +2081,7 @@
   {
     "Name": "KOLZ 102.9FM",
     "Latitude": 36.81444,
-    "Longitude": "–107.89278",
+    "Longitude": –107.89278,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> CHR • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -2730,7 +2730,7 @@
   {
     "Name": "KSDN 94.1FM",
     "Latitude": 45.4239,
-    "Longitude": "–98.5169",
+    "Longitude": -98.5169,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Rock • <br><b>Station Rank:</b>  #2 Brown County • <br><b>Buy Region:</b> REG 5<br>",
@@ -2961,7 +2961,7 @@
   {
     "Name": "KTWB 92.5FM",
     "Latitude": 43.5186,
-    "Longitude": "–96.5350",
+    "Longitude": "–96.5350,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -3049,7 +3049,7 @@
   {
     "Name": "KVHT 106.3FM",
     "Latitude": 42.9225,
-    "Longitude": "–97.0661",
+    "Longitude": –97.0661,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #2 • <br><b>Buy Region:</b> REG 5<br>",
@@ -3126,7 +3126,7 @@
   {
     "Name": "KWUF 106.1FM",
     "Latitude": 37.2567,
-    "Longitude": "–107.0183",
+    "Longitude": –107.0183,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #1 Archuleta County • <br><b>Buy Region:</b> REG 5<br>",
