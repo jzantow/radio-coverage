@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FY26 Proposed Boards</title>
+  <meta charset="utf-8" />
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #controls {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    input[type="text"] {
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 250px;
+    }
+    .control-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #legend {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
+      background: white;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      border-radius: 5px;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 3px;
+    }
+    .legend-color.billboard { background: #1E90FF; }
+    .legend-color.store   { background: #FF6347; }
+  </style>
+
+  <!-- Include geometry library for distance calculations -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
+</head>
+<body>
+  <div id="controls">
+    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, #97, Burley)" />
+    <button id="storeSearchBtn" class="control-btn">Search Store</button>
+    <input id="billboardSearchBox" type="text" placeholder="Search by ON # (e.g. 31555)" />
+    <button id="billboardSearchBtn" class="control-btn">Search Billboards</button>
+    <button id="resetBtn" class="control-btn">Reset</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div id="legend">
+    <h3>Legend</h3>
+    <p><span class="legend-color billboard"></span> Billboard</p>
+    <p><span class="legend-color store"></span> Store</p>
+  </div>
+
+  <script>
+    let map;
+    const storeMarkers   = [];
+    const billboardMarkers = [];
+    const billboardData    = [];
+    let highlightedMarker = null;
+
+    const COLORS = {
+      "Billboard": "#1E90FF",
+      "Store":   "#FF6347"
+    };
+
+    // Build a small gold circle icon for highlighting
+    function makeHighlightIcon() {
+      return {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 7,
+        fillColor: "#FFD700",
+        fillOpacity: 1,
+        strokeWeight: 1,
+        strokeColor: "#B8860B"
+      };
+    }
+
+    
+function getArrowEndpoint(startLat, startLng, bearingDegrees, lengthMeters) {
+  const R = 6378137; // Earth radius in meters
+  const bearingRad = bearingDegrees * Math.PI / 180;
+
+  const lat1 = startLat * Math.PI / 180;
+  const lng1 = startLng * Math.PI / 180;
+
+  const lat2 = Math.asin(Math.sin(lat1) * Math.cos(lengthMeters / R) +
+    Math.cos(lat1) * Math.sin(lengthMeters / R) * Math.cos(bearingRad));
+  const lng2 = lng1 + Math.atan2(Math.sin(bearingRad) * Math.sin(lengthMeters / R) * Math.cos(lat1),
+    Math.cos(lengthMeters / R) - Math.sin(lat1) * Math.sin(lat2));
+
+  return {
+    lat: lat2 * 180 / Math.PI,
+    lng: lng2 * 180 / Math.PI
+  };
+}
+
+function compassToBearing(direction) {
+  const dir = direction.toLowerCase();
+  if (dir === "north") return 0;
+  if (dir === "northeast") return 45;
+  if (dir === "east") return 90;
+  if (dir === "southeast") return 135;
+  if (dir === "south") return 180;
+  if (dir === "southwest") return 225;
+  if (dir === "west") return 270;
+  if (dir === "northwest") return 315;
+  return null;
+}
+
+function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: { lat: 42.53, lng: -114.36 },
+        gestureHandling: "greedy",
+        mapTypeControl: false  // hide Map/Satellite toggle
+      });
+map.setOptions({ scaleControl: true });
+
+      
+const infoWindow = new google.maps.InfoWindow();
+
+      fetch('https://jzantow.github.io/radio-coverage/26cookies.json')
+        .then(res => res.json())
+        .then(locations => {
+          // First, collect billboard data so we can compute ranges
+          locations.forEach(loc => {
+            if (loc.Type === "Billboard") {
+              billboardData.push(loc);
+            }
+          });
+
+          // Now place every marker (and draw circles for billboards)
+          locations.forEach(loc => {
+            const position = { lat: loc.Latitude, lng: loc.Longitude };
+            const color = COLORS[loc.Type] || "#000";
+
+            // If it’s a billboard, draw its coverage circle (non-clickable)
+            if (loc.Type === "Billboard") {
+              new google.maps.Circle({
+                strokeColor: color,
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: color,
+                fillOpacity: 0.25,
+                center: position,
+                radius: (loc.Radius || 0) * 1609.34,
+                map: map,
+                clickable: false
+              });
+            }
+
+            // Default colored icon based on type
+            const defaultIcon = {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 7,
+              fillColor: color,
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: "#fff"
+            };
+
+            // Create marker
+            const marker = new google.maps.Marker({
+              position: position,
+              map: map,
+              title: String(loc.Name),
+              icon: defaultIcon
+            });
+
+            // Store the default icon for reverting later
+            marker.defaultIcon = defaultIcon;
+
+            if (loc.Type === "Store") {
+              storeMarkers.push(marker);
+
+              // ─── STORE: click pops InfoWindow & highlight ───
+              marker.addListener("click", () => {
+                // Highlight this store marker
+                if (highlightedMarker && highlightedMarker !== marker) {
+                  highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+                }
+                marker.setIcon(makeHighlightIcon());
+                highlightedMarker = marker;
+
+                // Compute which billboards are in range
+                const inRangeNames = billboardData
+                  .map(st => {
+                    const storeLatLng   = new google.maps.LatLng(loc.Latitude, loc.Longitude);
+                    const billboardLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
+                    const distMeters = google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, billboardLatLng);
+                    const radiusMeters = (st.Radius || 0) * 1609.34;
+                    return distMeters <= radiusMeters ? st.Name : null;
+                  })
+                  .filter(name => name);
+
+                // Show InfoWindow on the store marker
+                const content = `
+                  <strong>${loc.Name}</strong><br>
+                  <b>Nearby Billboards:</b><br>
+                  ${inRangeNames.length ? inRangeNames.join("<br>") : "None"}
+                `;
+                infoWindow.setContent(content);
+                infoWindow.open(map, marker);
+              });
+
+            } else if (loc.Type === "Billboard") {
+              billboardMarkers.push(marker);
+              // Optional: draw arrow if Facing or Bearing is defined
+              let bearing = null;
+
+              if (loc.Bearing !== undefined) {
+                bearing = parseFloat(loc.Bearing);
+              } else if (loc.Facing) {
+                bearing = compassToBearing(loc.Facing);
+              }
+
+              if (bearing !== null) {
+                const arrowEnd = getArrowEndpoint(loc.Latitude, loc.Longitude, bearing, 100); // 100 meters
+
+                new google.maps.Polyline({
+                  path: [
+                    { lat: loc.Latitude, lng: loc.Longitude },
+                    arrowEnd
+                  ],
+                  map: map,
+                  strokeColor: "#1E90FF",
+                  strokeOpacity: 1.0,
+                  strokeWeight: 2,
+                  icons: [{
+                    icon: {
+                      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                      scale: 3,
+                      strokeColor: "#1E90FF"
+                    },
+                    offset: "100%"
+                  }]
+                });
+              }
+
+
+              // ─── BILLBOARD: click pops InfoWindow & highlight ───
+              marker.addListener("click", () => {
+                // Highlight this billboard marker
+                if (highlightedMarker && highlightedMarker !== marker) {
+                  highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+                }
+                marker.setIcon(makeHighlightIcon());
+                highlightedMarker = marker;
+
+                // Show billboard name
+const content = `
+  <strong>ON #${loc.Name}</strong><br>
+  <b>Board Type:</b> ${loc["Board Type"] || "N/A"}<br>
+  <b>Location:</b> ${loc.Info || "N/A"}<br>
+  <b>Live Dates:</b><br>${(loc["Live Dates"] || "N/A").replace(/\n/g, "<br>")}<br>
+  <b>Buyer:</b> ${loc["Buyer"] || "N/A"}<br>
+  <b>Associated Store(s):</b> ${loc["Associated Store(s)"] || "N/A"}<br>
+  <b>Directional:</b> ${loc["Directional"] || "N/A"}<br>
+  <b>Creative:</b> ${loc.Creative ? `<a href="${loc.Creative}" target="_blank">View</a>` : "N/A"}<br>
+  ${loc["POP Photo"] ? `<b>POP Photo:</b> <a href="${loc["POP Photo"]}" target="_blank">View</a>` : ""}
+`;
+infoWindow.setContent(content);
+                infoWindow.open(map, marker);
+              });
+            }
+          });
+        })
+        .catch(err => console.error("Failed to load locations.json:", err));
+
+      // === STORE SEARCH ===
+      document.getElementById("storeSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = storeMarkers.find(m => {
+          const title = m.getTitle().toLowerCase();
+          const numMatch = title.match(/#?(\d+)/);
+          return (
+            title.includes(query) ||
+            (numMatch && numMatch[1] === query.replace("#", ""))
+          );
+        });
+
+        if (match) {
+          // Center & zoom
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+
+          // Highlight the matched marker
+          if (highlightedMarker && highlightedMarker !== match) {
+            highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          }
+          match.setIcon(makeHighlightIcon());
+          highlightedMarker = match;
+
+          // Open its InfoWindow
+          google.maps.event.trigger(match, "click");
+        } else {
+          alert("No matching store found.");
+        }
+      });
+
+      // === BILLBOARD SEARCH ===
+      document.getElementById("billboardSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("billboardSearchBox").value.trim().toLowerCase();
+        if (!query) return;
+
+        const match = billboardMarkers.find(m =>
+          m.getTitle().toLowerCase().includes(query)
+        );
+
+        if (match) {
+          // Center & zoom
+          map.setCenter(match.getPosition());
+          map.setZoom(8);
+
+          // Highlight the matched marker
+          if (highlightedMarker && highlightedMarker !== match) {
+            highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          }
+          match.setIcon(makeHighlightIcon());
+          highlightedMarker = match;
+
+          // Open its InfoWindow
+          google.maps.event.trigger(match, "click");
+        } else {
+          alert("No matching billboard found.");
+        }
+      });
+
+      // === RESET ===
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        document.getElementById("storeSearchBox").value   = "";
+        document.getElementById("billboardSearchBox").value = "";
+        map.setZoom(5);
+        map.setCenter({ lat: 42.53, lng: -114.36 });
+
+        // Clear any highlighted marker
+        if (highlightedMarker) {
+          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          highlightedMarker = null;
+        }
+      });
+    }
+
+    window.onload = initMap;
+  </script>
+</body>
+</html>
