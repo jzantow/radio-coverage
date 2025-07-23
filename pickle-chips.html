@@ -247,7 +247,7 @@ const infoWindow = new google.maps.InfoWindow();
               }
 
               if (bearing !== null) {
-                const arrowEnd = getArrowEndpoint(loc.Latitude, loc.Longitude, bearing, 100); // 100 meters
+                const arrowEnd = getArrowEndpoint(loc.Latitude, loc.Longitude, bearing, 1000); // 100 meters
 
                 new google.maps.Polyline({
                   path: [
@@ -255,7 +255,7 @@ const infoWindow = new google.maps.InfoWindow();
                     arrowEnd
                   ],
                   map: map,
-                  strokeColor: "#1E90FF",
+                  strokeColor: "#43ff1e",
                   strokeOpacity: 1.0,
                   strokeWeight: 2,
                   icons: [{
