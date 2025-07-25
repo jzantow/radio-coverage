@@ -651,7 +651,7 @@
   {
     "Name": "KEGK 106.9FM",
     "Latitude": 46.546,
-    "Longitude": "–96.6280",
+    "Longitude": -96.6280,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #5 • <br><b>Buy Region:</b> REG 5<br>",
@@ -739,7 +739,7 @@
   {
     "Name": "KEYZ 660AM",
     "Latitude": 48.2389,
-    "Longitude": "–103.6503",
+    "Longitude": -103.6503,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> News/Talk • <br><b>Station Rank:</b>  #3 Williams County • <br><b>Buy Region:</b> REG 5<br>",
@@ -783,7 +783,7 @@
   {
     "Name": "KFGO 790AM",
     "Latitude": 46.7181,
-    "Longitude": "–96.8017",
+    "Longitude": -96.8017,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> News Talk Info • <br><b>Station Rank:</b>  #2T • <br><b>Buy Region:</b> REG 5<br>",
@@ -805,7 +805,7 @@
   {
     "Name": "KFNL 104.3FM",
     "Latitude": 43.6397,
-    "Longitude": "–92.6417",
+    "Longitude": -92.6417,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #4 Mower County • <br><b>Buy Region:</b> REG 5<br>",
@@ -904,7 +904,7 @@
   {
     "Name": "KGFX 1060AM",
     "Latitude": 44.285,
-    "Longitude": "–100.3469",
+    "Longitude": -100.3469,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Country • <br><b>Station Rank:</b>  #1 Hughes County • <br><b>Buy Region:</b> REG 5<br>",
@@ -926,7 +926,7 @@
   {
     "Name": "KGLB 1310AM",
     "Latitude": 44.777,
-    "Longitude": "–94.1270",
+    "Longitude": -94.1270,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 McLeod County • <br><b>Buy Region:</b> REG 5<br>",
@@ -1806,7 +1806,7 @@
   {
     "Name": "KMIT 105.9FM",
     "Latitude": 43.7378,
-    "Longitude": "‑98.2444",
+    "Longitude": ‑98.2444,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 Davison County • <br><b>Buy Region:</b> REG 5<br>",
@@ -1894,7 +1894,7 @@
   {
     "Name": "KNBL 1260AM",
     "Latitude": 43.5208,
-    "Longitude": "‑111.9925",
+    "Longitude": ‑111.9925,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #1 Pocatello Bannock County • <br><b>Buy Region:</b> REG 4<br>",
@@ -1905,7 +1905,7 @@
   {
     "Name": "KNBZ 97.7FM",
     "Latitude": 45.2083,
-    "Longitude": "‑98.6725",
+    "Longitude": -98.6725,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Contemporary • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -1949,7 +1949,7 @@
   {
     "Name": "KNOZ 97.7FM",
     "Latitude": 39.0667,
-    "Longitude": "‑108.7464",
+    "Longitude": ‑108.7464,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #2 Mesa County • <br><b>Buy Region:</b> REG 4<br>",
@@ -1960,7 +1960,7 @@
   {
     "Name": "KNPQ 107.3FM",
     "Latitude": 41.154,
-    "Longitude": "‑100.7733",
+    "Longitude": ‑100.7733,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Country • <br><b>Station Rank:</b>  #3T Lincoln County • <br><b>Buy Region:</b> REG 5<br>",
@@ -1993,7 +1993,7 @@
   {
     "Name": "KNYN 99.1FM",
     "Latitude": 41.35278,
-    "Longitude": "–110.90722",
+    "Longitude": -110.90722,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #6 Uinta County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -2004,7 +2004,7 @@
   {
     "Name": "KODJ 94.1FM",
     "Latitude": 40.59639,
-    "Longitude": "–112.02056",
+    "Longitude": -112.02056,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> CH • <br><b>Station Rank:</b>  #8 Tie • <br><b>Buy Region:</b> REG 4<br>",
@@ -2026,7 +2026,7 @@
   {
     "Name": "KODY 1240AM",
     "Latitude": 41.83333,
-    "Longitude": "–100.63333",
+    "Longitude": -100.63333,
     "Radius": 75,
     "Type": "Station",
     "Info": "<b>Genre:</b> All Talk • <br><b>Station Rank:</b>  #1 Lincoln County • <br><b>Buy Region:</b> REG 5<br>",
@@ -2070,7 +2070,7 @@
   {
     "Name": "KOLT 100.7FM",
     "Latitude": 41.04861,
-    "Longitude": "–104.89167",
+    "Longitude": -104.89167,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2081,7 +2081,7 @@
   {
     "Name": "KOLZ 102.9FM",
     "Latitude": 36.81444,
-    "Longitude": "–107.89278",
+    "Longitude": -107.89278,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> CHR • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -2213,7 +2213,7 @@
   {
     "Name": "KPLD 105.1FM",
     "Latitude": 37.6394,
-    "Longitude": "–113.0333",
+    "Longitude": -113.0333,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Hot AC • <br><b>Station Rank:</b>  #1 Iron County UT • <br><b>Buy Region:</b> REG 4<br>",
@@ -2730,7 +2730,7 @@
   {
     "Name": "KSDN 94.1FM",
     "Latitude": 45.4239,
-    "Longitude": "–98.5169",
+    "Longitude": -98.5169,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Rock • <br><b>Station Rank:</b>  #2 Brown County • <br><b>Buy Region:</b> REG 5<br>",
@@ -2763,7 +2763,7 @@
   {
     "Name": "KSFI 100.3FM",
     "Latitude": 40.6594,
-    "Longitude": "–112.2014",
+    "Longitude": -112.2014,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> AC • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2785,7 +2785,7 @@
   {
     "Name": "KSIT 99.7FM",
     "Latitude": 41.4333,
-    "Longitude": "–109.1178",
+    "Longitude": -109.1178,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> AH • <br><b>Station Rank:</b>  #6 Sweetwater County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -2807,7 +2807,7 @@
   {
     "Name": "KSME 96.1FM",
     "Latitude": 40.6806,
-    "Longitude": "–104.9439",
+    "Longitude": -104.9439,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Pop Contemporary Hit Radio • <br><b>Station Rank:</b>  #3 Tied • <br><b>Buy Region:</b> REG 4<br>",
@@ -2829,7 +2829,7 @@
   {
     "Name": "KSOP 104.3FM",
     "Latitude": 40.7199,
-    "Longitude": "–111.9291",
+    "Longitude": -111.9291,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #6 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2840,7 +2840,7 @@
   {
     "Name": "KSRX 97.5FM",
     "Latitude": 40.4525,
-    "Longitude": "–103.1509",
+    "Longitude": -103.1509,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #2 Logan County • <br><b>Buy Region:</b> REG 4<br>",
@@ -2862,7 +2862,7 @@
   {
     "Name": "KTAK 93.9FM",
     "Latitude": 42.7194,
-    "Longitude": "–108.1450",
+    "Longitude": -108.1450,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 Fremont County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -2873,7 +2873,7 @@
   {
     "Name": "KTCL 93.3FM",
     "Latitude": 39.7331,
-    "Longitude": "–105.2367",
+    "Longitude": -105.2367,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Alternative • <br><b>Station Rank:</b>  #5 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2884,7 +2884,7 @@
   {
     "Name": "KTED 100.5FM",
     "Latitude": 42.7583,
-    "Longitude": "–106.3236",
+    "Longitude": -106.3236,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Active Rock • <br><b>Station Rank:</b>  #1 Natrona County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -2939,7 +2939,7 @@
   {
     "Name": "KTRR 102.5FM",
     "Latitude": 40.6419,
-    "Longitude": "–104.8181",
+    "Longitude": -104.8181,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2950,7 +2950,7 @@
   {
     "Name": "KTUG 105.1FM",
     "Latitude": 42.5783,
-    "Longitude": "–108.7133",
+    "Longitude": -108.7133,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #3 Fremont County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -2961,7 +2961,7 @@
   {
     "Name": "KTWB 92.5FM",
     "Latitude": 43.5186,
-    "Longitude": "–96.5350",
+    "Longitude": -96.5350,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 • <br><b>Buy Region:</b> REG 5<br>",
@@ -2972,7 +2972,7 @@
   {
     "Name": "KUAD 99.1FM",
     "Latitude": 40.6385,
-    "Longitude": "–104.8172",
+    "Longitude": -104.8172,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> New Country • <br><b>Station Rank:</b>  #3 Tied • <br><b>Buy Region:</b> REG 4<br>",
@@ -2983,7 +2983,7 @@
   {
     "Name": "KUBL 93.3FM",
     "Latitude": 40.6594,
-    "Longitude": "–111.9291",
+    "Longitude": -111.9291,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #2 • <br><b>Buy Region:</b> REG 4<br>",
@@ -2994,7 +2994,7 @@
   {
     "Name": "KUDD 105.1FM",
     "Latitude": 40.6597,
-    "Longitude": "–112.2011",
+    "Longitude": -112.2011,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> PHR • <br><b>Station Rank:</b>  #14 • <br><b>Buy Region:</b> REG 4<br>",
@@ -3038,7 +3038,7 @@
   {
     "Name": "KVFX 94.5FM",
     "Latitude": 41.7483,
-    "Longitude": "–112.2278",
+    "Longitude": -112.2278,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Top 40 • <br><b>Station Rank:</b>  #3 Cache County UT • <br><b>Buy Region:</b> REG 4<br>",
@@ -3049,7 +3049,7 @@
   {
     "Name": "KVHT 106.3FM",
     "Latitude": 42.9225,
-    "Longitude": "–97.0661",
+    "Longitude": -97.0661,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #2 • <br><b>Buy Region:</b> REG 5<br>",
@@ -3060,7 +3060,7 @@
   {
     "Name": "KVUU 99.9FM",
     "Latitude": 38.7456,
-    "Longitude": "–104.8622",
+    "Longitude": -104.8622,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Hot Adult Contemporary • <br><b>Station Rank:</b>  #3 • <br><b>Buy Region:</b> REG 4<br>",
@@ -3082,7 +3082,7 @@
   {
     "Name": "KWBL 106.7FM",
     "Latitude": 39.7328,
-    "Longitude": "–105.2356",
+    "Longitude": -105.2356,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #11 • <br><b>Buy Region:</b> REG 4<br>",
@@ -3126,7 +3126,7 @@
   {
     "Name": "KWUF 106.1FM",
     "Latitude": 37.2567,
-    "Longitude": "–107.0183",
+    "Longitude": -107.0183,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #1 Archuleta County • <br><b>Buy Region:</b> REG 5<br>",
@@ -3137,7 +3137,7 @@
   {
     "Name": "KWUT 97.7FM",
     "Latitude": 38.3856,
-    "Longitude": "–112.3333",
+    "Longitude": -112.3333,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 Sevier County UT • <br><b>Buy Region:</b> REG 4<br>",
@@ -3170,7 +3170,7 @@
   {
     "Name": "KWYY 95.5FM",
     "Latitude": 42.7436,
-    "Longitude": "–106.3072",
+    "Longitude": -106.3072,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #3 Natrona County WY • <br><b>Buy Region:</b> REG 4<br>",
@@ -3181,7 +3181,7 @@
   {
     "Name": "KXBN 92.1FM",
     "Latitude": 37.6453,
-    "Longitude": "–113.3736",
+    "Longitude": -113.3736,
     "Radius": 40,
     "Type": "Station",
     "Info": "<b>Genre:</b> CHR • <br><b>Station Rank:</b>  #4 Iron County UT • <br><b>Buy Region:</b> REG 4<br>",
