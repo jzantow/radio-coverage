@@ -1804,17 +1804,6 @@
     "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1nMkE1tn9_cG4msZr6eidoX5_wMJU52Vc"
   },
   {
-    "Name": "KMIT 105.9FM",
-    "Latitude": 43.7378,
-    "Longitude": ‑98.2444,
-    "Radius": 40,
-    "Type": "Station",
-    "Info": "<b>Genre:</b> Country • <br><b>Station Rank:</b>  #1 Davison County • <br><b>Buy Region:</b> REG 5<br>",
-    "Tombras Reg": "REG 5",
-    "Coverage Map": "https://radio-locator.com/pats/KMIT_FM_LU.gif",
-    "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1NulZObGfMQxt4V-N1ynOpSehlQxg8yWb"
-  },
-  {
     "Name": "KMIX 100.9FM",
     "Latitude": 37.6247,
     "Longitude": -121.4003,
@@ -1892,17 +1881,6 @@
     "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1rl0md7_m5fjLpMnp7cdYZ-H4GBu1Sai_"
   },
   {
-    "Name": "KNBL 1260AM",
-    "Latitude": 43.5208,
-    "Longitude": ‑111.9925,
-    "Radius": 75,
-    "Type": "Station",
-    "Info": "<b>Genre:</b> Classic Hits • <br><b>Station Rank:</b>  #1 Pocatello Bannock County • <br><b>Buy Region:</b> REG 4<br>",
-    "Tombras Reg": "REG 4",
-    "Coverage Map": "https://radio-locator.com/pats/KNBL_AM_LD.gif",
-    "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1U_VBuZcO14Syvs-xZp3S_YXSRq8B8LyW"
-  },
-  {
     "Name": "KNBZ 97.7FM",
     "Latitude": 45.2083,
     "Longitude": -98.6725,
@@ -1945,28 +1923,6 @@
     "Tombras Reg": "REG 2",
     "Coverage Map": "https://radio-locator.com/pats/KNDD_FM_LU.gif",
     "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1rhIm5d2x3MxVJrVzlcuE23LBz3oJJYqY"
-  },
-  {
-    "Name": "KNOZ 97.7FM",
-    "Latitude": 39.0667,
-    "Longitude": ‑108.7464,
-    "Radius": 40,
-    "Type": "Station",
-    "Info": "<b>Genre:</b> Adult Hits • <br><b>Station Rank:</b>  #2 Mesa County • <br><b>Buy Region:</b> REG 4<br>",
-    "Tombras Reg": "REG 4",
-    "Coverage Map": "https://radio-locator.com/pats/KNOZ_FM_LU.gif",
-    "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1U_VBuZcO14Syvs-xZp3S_YXSRq8B8LyW"
-  },
-  {
-    "Name": "KNPQ 107.3FM",
-    "Latitude": 41.154,
-    "Longitude": ‑100.7733,
-    "Radius": 40,
-    "Type": "Station",
-    "Info": "<b>Genre:</b> Classic Country • <br><b>Station Rank:</b>  #3T Lincoln County • <br><b>Buy Region:</b> REG 5<br>",
-    "Tombras Reg": "REG 5",
-    "Coverage Map": "https://radio-locator.com/pats/KNPQ_FM_LU.gif",
-    "BUY SUMMARY FOLDER": "https://drive.google.com/drive/u/0/folders/1NulZObGfMQxt4V-N1ynOpSehlQxg8yWb"
   },
   {
     "Name": "KNRK 94.7FM",
