@@ -1,326 +1,376 @@
+Here is your updated code with the filter functionality added.
+
+The main changes are:
+
+1.  **HTML**: Added a filter section with checkboxes for stores, stations, and billboards inside the `#controls` div.
+2.  **JavaScript**:
+      * Created the **`updateMarkers`** function to toggle marker visibility based on checkbox state.
+      * Added event listeners to each checkbox to call `updateMarkers` whenever a checkbox's state changes.
+      * Called `updateMarkers` at the very end of `initMap` to ensure the initial state of the checkboxes is reflected on the map.
+
+<!-- end list -->
+
+```html
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Combined Coverage Map</title>
-  <meta charset="utf-8" />
-  <style>
-    html, body, #map {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    #controls {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 5;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 8px;
-      border-radius: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    input[type="text"] {
-      padding: 6px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 250px;
-    }
-    .control-btn {
-      padding: 6px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: white;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-    #legend {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 5;
-      background: white;
-      padding: 10px;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      border-radius: 5px;
-    }
-    .legend-color {
-      display: inline-block;
-      width: 15px;
-      height: 15px;
-      margin-right: 6px;
-      vertical-align: middle;
-      border-radius: 3px;
-    }
-    .legend-color.store     { background: #FF6347; } /* Red-Orange */
-    .legend-color.station   { background: #1E90FF; } /* Blue */
-    .legend-color.billboard { background: #32CD32; } /* Green */
-  </style>
+  <title>Combined Coverage Map</title>
+  <meta charset="utf-8" />
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    input[type="text"] {
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 250px;
+    }
+    .control-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #legend {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 5;
+      background: white;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      border-radius: 5px;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 3px;
+    }
+    .legend-color.store     { background: #FF6347; } /* Red-Orange */
+    .legend-color.station   { background: #1E90FF; } /* Blue */
+    .legend-color.billboard { background: #32CD32; } /* Green */
+  </style>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlgV94Xs1mTP01IZo3wqQWpx9png3l4DE&libraries=geometry"></script>
 </head>
 <body>
-  <div id="controls">
-    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, Burley)" />
-    <button id="storeSearchBtn" class="control-btn">Search Store</button>
-    <input id="stationSearchBox" type="text" placeholder="Search for station (e.g. KDIL)" />
-    <button id="stationSearchBtn" class="control-btn">Search Station</button>
-    <input id="billboardSearchBox" type="text" placeholder="Search by ON # (e.g. 31555)" />
-    <button id="billboardSearchBtn" class="control-btn">Search Billboard</button>
-    <button id="resetBtn" class="control-btn">Reset</button>
-  </div>
+  <div id="controls">
+    <input id="storeSearchBox" type="text" placeholder="Search for store (e.g. 97, Burley)" />
+    <button id="storeSearchBtn" class="control-btn">Search Store</button>
+    <input id="stationSearchBox" type="text" placeholder="Search for station (e.g. KDIL)" />
+    <button id="stationSearchBtn" class="control-btn">Search Station</button>
+    <input id="billboardSearchBox" type="text" placeholder="Search by ON # (e.g. 31555)" />
+    <button id="billboardSearchBtn" class="control-btn">Search Billboard</button>
+    <button id="resetBtn" class="control-btn">Reset</button>
 
-  <div id="map"></div>
+    <hr style="width:100%; margin:10px 0;">
 
-  <div id="legend">
-    <h3>Legend</h3>
-    <p><span class="legend-color store"></span> Store</p>
-    <p><span class="legend-color station"></span> Station</p>
-    <p><span class="legend-color billboard"></span> Billboard</p>
-  </div>
+    <div id="filters">
+        <label><input type="checkbox" id="storesCheckbox" checked> Stores</label>
+        <label><input type="checkbox" id="stationsCheckbox" checked> Stations</label>
+        <label><input type="checkbox" id="billboardsCheckbox" checked> Billboards</label>
+    </div>
+  </div>
 
-  <script>
-    let map;
-    const storeMarkers     = [];
-    const stationMarkers   = [];
-    const billboardMarkers = [];
-    const stationData      = [];
-    const billboardData    = [];
-    let highlightedMarker  = null;
+  <div id="map"></div>
 
-    const COLORS = {
-      "Store":     "#FF6347", // Red-Orange
-      "Station":   "#1E90FF", // Blue
-      "Billboard": "#32CD32"  // Green
-    };
+  <div id="legend">
+    <h3>Legend</h3>
+    <p><span class="legend-color store"></span> Store</p>
+    <p><span class="legend-color station"></span> Station</p>
+    <p><span class="legend-color billboard"></span> Billboard</p>
+  </div>
 
-    function makeHighlightIcon() {
-      return {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 7,
-        fillColor: "#FFD700",
-        fillOpacity: 1,
-        strokeWeight: 1,
-        strokeColor: "#B8860B"
-      };
+  <script>
+    let map;
+    const storeMarkers     = [];
+    const stationMarkers   = [];
+    const billboardMarkers = [];
+    const stationData      = [];
+    const billboardData    = [];
+    let highlightedMarker  = null;
+    let circles = [];
+
+    const COLORS = {
+      "Store":     "#FF6347", // Red-Orange
+      "Station":   "#1E90FF", // Blue
+      "Billboard": "#32CD32"  // Green
+    };
+
+    function makeHighlightIcon() {
+      return {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 7,
+        fillColor: "#FFD700",
+        fillOpacity: 1,
+        strokeWeight: 1,
+        strokeColor: "#B8860B"
+      };
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: { lat: 42.53, lng: -114.36 },
+        gestureHandling: "greedy",
+        mapTypeControl: false,
+        scaleControl: true
+      });
+
+      const infoWindow = new google.maps.InfoWindow();
+
+      // Define URLs for the data sources
+      const radioDataURL = 'https://jzantow.github.io/radio-coverage/locations.json';
+      const billboardDataURL = 'https://jzantow.github.io/radio-coverage/billboards.json';
+
+      // Fetch both JSON files at the same time
+      Promise.all([
+        fetch(radioDataURL).then(res => res.json()),
+        fetch(billboardDataURL).then(res => res.json())
+      ]).then(([radioLocations, billboardLocations]) => {
+        // --- Process and Combine Data ---
+        const uniqueStores = new Map();
+
+        // Process radio data for stations and stores
+        radioLocations.forEach(loc => {
+          if (loc.Type === "Station") {
+            stationData.push(loc);
+          } else if (loc.Type === "Store") {
+            uniqueStores.set(loc.Name, loc); // Use name as a key to prevent duplicates
+          }
+        });
+
+        // Process billboard data for billboards and stores
+        billboardLocations.forEach(loc => {
+          if (loc.Type === "Billboard") {
+            billboardData.push(loc);
+          } else if (loc.Type === "Store") {
+            uniqueStores.set(loc.Name, loc);
+          }
+        });
+
+        const allStores = Array.from(uniqueStores.values());
+        
+        // --- Create Markers for Each Type ---
+        createMarkers(allStores);
+        createMarkers(stationData);
+        createMarkers(billboardData);
+
+        // Set up the initial state of the markers and filter listeners
+        updateMarkers();
+        document.getElementById('storesCheckbox').addEventListener('change', updateMarkers);
+        document.getElementById('stationsCheckbox').addEventListener('change', updateMarkers);
+        document.getElementById('billboardsCheckbox').addEventListener('change', updateMarkers);
+
+      }).catch(err => console.error("Failed to load location data:", err));
+
+      // --- Universal Marker Creation Function ---
+      function createMarkers(locations) {
+        locations.forEach(loc => {
+          const position = { lat: loc.Latitude, lng: loc.Longitude };
+          const color = COLORS[loc.Type] || "#000";
+
+          // Draw coverage circles for stations and billboards
+          if (loc.Type === "Station" || loc.Type === "Billboard") {
+            const circle = new google.maps.Circle({
+              strokeColor: color, strokeOpacity: 0.8, strokeWeight: 2,
+              fillColor: color, fillOpacity: 0.25,
+              center: position,
+              radius: (loc.Radius || 0) * 1609.34, // Convert miles to meters
+              map: map, clickable: false
+            });
+            circles.push(circle);
+          }
+
+          const defaultIcon = {
+            path: google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: color,
+            fillOpacity: 1, strokeWeight: 1, strokeColor: "#fff"
+          };
+
+          const marker = new google.maps.Marker({
+            position: position, map: map,
+            title: String(loc.Name), icon: defaultIcon
+          });
+          marker.defaultIcon = defaultIcon;
+
+          // Add appropriate click listener based on type
+          if (loc.Type === "Store") {
+            addStoreClickListener(marker, loc);
+            storeMarkers.push(marker);
+          } else if (loc.Type === "Station") {
+            addStationClickListener(marker, loc);
+            stationMarkers.push(marker);
+          } else if (loc.Type === "Billboard") {
+            addBillboardClickListener(marker, loc);
+            billboardMarkers.push(marker);
+          }
+        });
+      }
+
+      // --- Click Listener for STORES ---
+      function addStoreClickListener(marker, loc) {
+        marker.addListener("click", () => {
+          highlightMarker(marker);
+          const storeLatLng = marker.getPosition();
+
+          const inRangeStations = stationData.map(st => {
+            const itemLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
+            return google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, itemLatLng) <= (st.Radius || 0) * 1609.34 ? st.Name : null;
+          }).filter(name => name);
+          
+          const inRangeBillboards = billboardData.map(bb => {
+            const itemLatLng = new google.maps.LatLng(bb.Latitude, bb.Longitude);
+            return google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, itemLatLng) <= (bb.Radius || 0) * 1609.34 ? `ON #${bb.Name}` : null;
+          }).filter(name => name);
+
+          const content = `
+            <strong>${loc.Name}</strong><br><br>
+            <b>Stations In Range:</b><br>
+            ${inRangeStations.length ? inRangeStations.join("<br>") : "None"}
+            <br><br>
+            <b>Nearby Billboards:</b><br>
+            ${inRangeBillboards.length ? inRangeBillboards.join("<br>") : "None"}
+          `;
+          infoWindow.setContent(content);
+          infoWindow.open(map, marker);
+        });
+      }
+      
+      // --- Click Listener for STATIONS ---
+      function addStationClickListener(marker, loc) {
+        marker.addListener("click", () => {
+          highlightMarker(marker);
+          infoWindow.setContent(`<strong>${loc.Name}</strong>`);
+          infoWindow.open(map, marker);
+        });
+      }
+
+      // --- Click Listener for BILLBOARDS (from your file) ---
+      function addBillboardClickListener(marker, loc) {
+        marker.addListener("click", () => {
+          highlightMarker(marker);
+          const content = `
+            <strong>ON #${loc.Name}</strong><br>
+            <b>Board Type:</b> ${loc["Board Type"] || "N/A"}<br>
+            <b>Location:</b> ${loc.Info || "N/A"}<br>
+            <b>Live Dates:</b><br>${(loc["Live Dates"] || "N/A").replace(/\n/g, "<br>")}<br>
+            <b>Buyer:</b> ${loc["Buyer"] || "N/A"}<br>
+            <b>Associated Store(s):</b> ${loc["Associated Store(s)"] || "N/A"}<br>
+            <b>Directional:</b> ${loc["Directional"] || "N/A"}<br>
+            <b>Creative:</b> ${loc.Creative ? `<a href="${loc.Creative}" target="_blank">View</a>` : "N/A"}<br>
+            ${loc["POP Photo"] ? `<b>POP Photo:</b> <a href="${loc["POP Photo"]}" target="_blank">View</a>` : ""}
+          `;
+          infoWindow.setContent(content);
+          infoWindow.open(map, marker);
+        });
+      }
+
+      function highlightMarker(marker) {
+        if (highlightedMarker && highlightedMarker !== marker) {
+          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+        }
+        marker.setIcon(makeHighlightIcon());
+        highlightedMarker = marker;
+      }
+
+    // --- Filter Function ---
+    function updateMarkers() {
+        const showStores = document.getElementById('storesCheckbox').checked;
+        const showStations = document.getElementById('stationsCheckbox').checked;
+        const showBillboards = document.getElementById('billboardsCheckbox').checked;
+
+        // Toggle visibility of markers
+        storeMarkers.forEach(marker => {
+            marker.setMap(showStores ? map : null);
+        });
+
+        stationMarkers.forEach(marker => {
+            marker.setMap(showStations ? map : null);
+        });
+
+        billboardMarkers.forEach(marker => {
+            marker.setMap(showBillboards ? map : null);
+        });
     }
+      
+      // Reusable search function
+      function performSearch(query, markers, notFoundMessage) {
+        if (!query) return;
+        const match = markers.find(m => m.getTitle().toLowerCase().includes(query));
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
-        center: { lat: 42.53, lng: -114.36 },
-        gestureHandling: "greedy",
-        mapTypeControl: false,
-        scaleControl: true
-      });
+        if (match) {
+          map.setCenter(match.getPosition());
+          map.setZoom(10);
+          google.maps.event.trigger(match, "click");
+        } else {
+          alert(notFoundMessage);
+        }
+      }
 
-      const infoWindow = new google.maps.InfoWindow();
+      // --- Search Event Listeners ---
+      document.getElementById("storeSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
+        // Custom store search to handle "#" prefixes
+        const match = storeMarkers.find(m => {
+          const title = m.getTitle().toLowerCase();
+          const numMatch = title.match(/#?(\d+)/);
+          return title.includes(query) || (numMatch && numMatch[1] === query.replace("#", ""));
+        });
+        if (match) { map.setCenter(match.getPosition()); map.setZoom(10); google.maps.event.trigger(match, "click"); }
+        else { alert("No matching store found."); }
+      });
+      document.getElementById("stationSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("stationSearchBox").value.trim().toLowerCase();
+        performSearch(query, stationMarkers, "No matching station found.");
+      });
+      document.getElementById("billboardSearchBtn").addEventListener("click", () => {
+        const query = document.getElementById("billboardSearchBox").value.trim().toLowerCase();
+        performSearch(query, billboardMarkers, "No matching billboard found.");
+      });
 
-      // Define URLs for the data sources
-      const radioDataURL = 'https://jzantow.github.io/radio-coverage/locations.json';
-      const billboardDataURL = 'https://jzantow.github.io/radio-coverage/billboards.json';
+      // --- Reset Button ---
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        document.getElementById("storeSearchBox").value = "";
+        document.getElementById("stationSearchBox").value = "";
+        document.getElementById("billboardSearchBox").value = "";
+        map.setZoom(5);
+        map.setCenter({ lat: 42.53, lng: -114.36 });
+        if (highlightedMarker) {
+          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
+          highlightedMarker = null;
+        }
+        infoWindow.close();
+      });
+    }
 
-      // Fetch both JSON files at the same time
-      Promise.all([
-        fetch(radioDataURL).then(res => res.json()),
-        fetch(billboardDataURL).then(res => res.json())
-      ]).then(([radioLocations, billboardLocations]) => {
-        // --- Process and Combine Data ---
-        const uniqueStores = new Map();
-
-        // Process radio data for stations and stores
-        radioLocations.forEach(loc => {
-          if (loc.Type === "Station") {
-            stationData.push(loc);
-          } else if (loc.Type === "Store") {
-            uniqueStores.set(loc.Name, loc); // Use name as a key to prevent duplicates
-          }
-        });
-
-        // Process billboard data for billboards and stores
-        billboardLocations.forEach(loc => {
-          if (loc.Type === "Billboard") {
-            billboardData.push(loc);
-          } else if (loc.Type === "Store") {
-            uniqueStores.set(loc.Name, loc);
-          }
-        });
-
-        const allStores = Array.from(uniqueStores.values());
-        
-        // --- Create Markers for Each Type ---
-        createMarkers(allStores);
-        createMarkers(stationData);
-        createMarkers(billboardData);
-
-      }).catch(err => console.error("Failed to load location data:", err));
-
-      // --- Universal Marker Creation Function ---
-      function createMarkers(locations) {
-        locations.forEach(loc => {
-          const position = { lat: loc.Latitude, lng: loc.Longitude };
-          const color = COLORS[loc.Type] || "#000";
-
-          // Draw coverage circles for stations and billboards
-          if (loc.Type === "Station" || loc.Type === "Billboard") {
-            new google.maps.Circle({
-              strokeColor: color, strokeOpacity: 0.8, strokeWeight: 2,
-              fillColor: color, fillOpacity: 0.25,
-              center: position,
-              radius: (loc.Radius || 0) * 1609.34, // Convert miles to meters
-              map: map, clickable: false
-            });
-          }
-
-          const defaultIcon = {
-            path: google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: color,
-            fillOpacity: 1, strokeWeight: 1, strokeColor: "#fff"
-          };
-
-          const marker = new google.maps.Marker({
-            position: position, map: map,
-            title: String(loc.Name), icon: defaultIcon
-          });
-          marker.defaultIcon = defaultIcon;
-
-          // Add appropriate click listener based on type
-          if (loc.Type === "Store") {
-            addStoreClickListener(marker, loc);
-            storeMarkers.push(marker);
-          } else if (loc.Type === "Station") {
-            addStationClickListener(marker, loc);
-            stationMarkers.push(marker);
-          } else if (loc.Type === "Billboard") {
-            addBillboardClickListener(marker, loc);
-            billboardMarkers.push(marker);
-          }
-        });
-      }
-
-      // --- Click Listener for STORES ---
-      function addStoreClickListener(marker, loc) {
-        marker.addListener("click", () => {
-          highlightMarker(marker);
-          const storeLatLng = marker.getPosition();
-
-          const inRangeStations = stationData.map(st => {
-            const itemLatLng = new google.maps.LatLng(st.Latitude, st.Longitude);
-            return google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, itemLatLng) <= (st.Radius || 0) * 1609.34 ? st.Name : null;
-          }).filter(name => name);
-          
-          const inRangeBillboards = billboardData.map(bb => {
-            const itemLatLng = new google.maps.LatLng(bb.Latitude, bb.Longitude);
-            return google.maps.geometry.spherical.computeDistanceBetween(storeLatLng, itemLatLng) <= (bb.Radius || 0) * 1609.34 ? `ON #${bb.Name}` : null;
-          }).filter(name => name);
-
-          const content = `
-            <strong>${loc.Name}</strong><br><br>
-            <b>Stations In Range:</b><br>
-            ${inRangeStations.length ? inRangeStations.join("<br>") : "None"}
-            <br><br>
-            <b>Nearby Billboards:</b><br>
-            ${inRangeBillboards.length ? inRangeBillboards.join("<br>") : "None"}
-          `;
-          infoWindow.setContent(content);
-          infoWindow.open(map, marker);
-        });
-      }
-      
-      // --- Click Listener for STATIONS ---
-      function addStationClickListener(marker, loc) {
-        marker.addListener("click", () => {
-          highlightMarker(marker);
-          infoWindow.setContent(`<strong>${loc.Name}</strong>`);
-          infoWindow.open(map, marker);
-        });
-      }
-
-      // --- Click Listener for BILLBOARDS (from your file) ---
-      function addBillboardClickListener(marker, loc) {
-        marker.addListener("click", () => {
-          highlightMarker(marker);
-          const content = `
-            <strong>ON #${loc.Name}</strong><br>
-            <b>Board Type:</b> ${loc["Board Type"] || "N/A"}<br>
-            <b>Location:</b> ${loc.Info || "N/A"}<br>
-            <b>Live Dates:</b><br>${(loc["Live Dates"] || "N/A").replace(/\n/g, "<br>")}<br>
-            <b>Buyer:</b> ${loc["Buyer"] || "N/A"}<br>
-            <b>Associated Store(s):</b> ${loc["Associated Store(s)"] || "N/A"}<br>
-            <b>Directional:</b> ${loc["Directional"] || "N/A"}<br>
-            <b>Creative:</b> ${loc.Creative ? `<a href="${loc.Creative}" target="_blank">View</a>` : "N/A"}<br>
-            ${loc["POP Photo"] ? `<b>POP Photo:</b> <a href="${loc["POP Photo"]}" target="_blank">View</a>` : ""}
-          `;
-          infoWindow.setContent(content);
-          infoWindow.open(map, marker);
-        });
-      }
-
-      function highlightMarker(marker) {
-        if (highlightedMarker && highlightedMarker !== marker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
-        }
-        marker.setIcon(makeHighlightIcon());
-        highlightedMarker = marker;
-      }
-      
-      // Reusable search function
-      function performSearch(query, markers, notFoundMessage) {
-        if (!query) return;
-        const match = markers.find(m => m.getTitle().toLowerCase().includes(query));
-
-        if (match) {
-          map.setCenter(match.getPosition());
-          map.setZoom(10);
-          google.maps.event.trigger(match, "click");
-        } else {
-          alert(notFoundMessage);
-        }
-      }
-
-      // --- Search Event Listeners ---
-      document.getElementById("storeSearchBtn").addEventListener("click", () => {
-        const query = document.getElementById("storeSearchBox").value.trim().toLowerCase();
-        // Custom store search to handle "#" prefixes
-        const match = storeMarkers.find(m => {
-          const title = m.getTitle().toLowerCase();
-          const numMatch = title.match(/#?(\d+)/);
-          return title.includes(query) || (numMatch && numMatch[1] === query.replace("#", ""));
-        });
-        if (match) { map.setCenter(match.getPosition()); map.setZoom(10); google.maps.event.trigger(match, "click"); }
-        else { alert("No matching store found."); }
-      });
-      document.getElementById("stationSearchBtn").addEventListener("click", () => {
-        const query = document.getElementById("stationSearchBox").value.trim().toLowerCase();
-        performSearch(query, stationMarkers, "No matching station found.");
-      });
-      document.getElementById("billboardSearchBtn").addEventListener("click", () => {
-        const query = document.getElementById("billboardSearchBox").value.trim().toLowerCase();
-        performSearch(query, billboardMarkers, "No matching billboard found.");
-      });
-
-      // --- Reset Button ---
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        document.getElementById("storeSearchBox").value = "";
-        document.getElementById("stationSearchBox").value = "";
-        document.getElementById("billboardSearchBox").value = "";
-        map.setZoom(5);
-        map.setCenter({ lat: 42.53, lng: -114.36 });
-        if (highlightedMarker) {
-          highlightedMarker.setIcon(highlightedMarker.defaultIcon);
-          highlightedMarker = null;
-        }
-        infoWindow.close();
-      });
-    }
-
-    window.onload = initMap;
-  </script>
+    window.onload = initMap;
+  </script>
 </body>
 </html>
+```
